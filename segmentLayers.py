@@ -1,9 +1,12 @@
 import numpy as np
-import torch
+# import torch
 import matplotlib.pyplot as plt
 import cv2
 from PIL import Image
 
+InputFileName = 'TestShape.jpg'
+InputFilePath = '/home/alisaazxh/' + InputFileName
+ModelCheckpointPath = "/home/alisaazxh/segment/sam_vit_h_4b8939.pth"
 # Display all masks in the image
 def show_anns(anns):
     if len(anns) == 0:
@@ -53,7 +56,7 @@ def show_selected_mask(anns, i):
 # Display the selected mask in image cropped from original
 def show_cropped_mask(anns, i):
     sorted_anns = sorted(anns, key=(lambda x: x['area']), reverse=True)
-    img = Image.open('/home/alisaazxh/R.jpg')
+    img = Image.open(InputFilePath)
     bbox = sorted_anns[i]['bbox']
     cropped_image = img.crop([bbox[0], bbox[1], bbox[0]+bbox[2], bbox[1]+bbox[3]])
     figureName = ''f'/home/alisaazxh/segment/test{i}.jpg'''
@@ -62,7 +65,8 @@ def show_cropped_mask(anns, i):
 # Display the selected mask in image cropped from original based on segmentation
 def better_cropped_mask(anns, i):
     sorted_anns = sorted(anns, key=(lambda x: x['area']), reverse=True)
-    image = cv2.imread('/home/alisaazxh/R.jpg')
+    image = cv2.imread(InputFilePath)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     m = sorted_anns[i]['segmentation']
     for x in range(image.shape[0]):
         for y in range(image.shape[1]):
@@ -71,11 +75,11 @@ def better_cropped_mask(anns, i):
     plt.figure(figsize=(20,20))
     plt.imshow(image)
     plt.axis('off')
-    figureName = f'/home/alisaazxh/segment/test{i}.jpg'
+    figureName = f'/home/alisaazxh/segment/' + InputFileName + f'{i}.jpg'
     plt.savefig(figureName)
     
 
-image = cv2.imread('/home/alisaazxh/R.jpg')
+image = cv2.imread(InputFilePath)
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 plt.figure(figsize=(20,20))
@@ -87,7 +91,7 @@ import sys
 sys.path.append("..")
 from segment_anything import sam_model_registry, SamAutomaticMaskGenerator, SamPredictor
 
-sam_checkpoint = "/home/alisaazxh/segment/sam_vit_h_4b8939.pth"
+sam_checkpoint = ModelCheckpointPath
 model_type = "vit_h"
 device = "cuda"
 
@@ -99,14 +103,20 @@ masks = mask_generator.generate(image)
 print(len(masks))
 print(masks[0].keys())
 
-# for i in range(len(masks)):
-#     # plt.figure(figsize=(20,20))
-#     # plt.imshow(image)
-#     # plt.axis('off')
-#     show_cropped_mask(masks,i)
-#     # figureName = f'/home/alisaazxh/segment/test{i}.jpg'
-#     # plt.savefig(figureName)
+# Display all masks in the image
+# show_anns(masks)
+# figureName = f'/home/alisaazxh/segment/testAllMasks.jpg'
+# plt.savefig(figureName)
 
-for i in range(len(masks)):
+# for i in range(len(masks)):
+#     plt.figure(figsize=(20,20))
+#     plt.imshow(image)
+#     plt.axis('off')
+#     show_cropped_mask(masks,i)
+#     figureName = f'/home/alisaazxh/segment/test{i}.jpg'
+#     plt.savefig(figureName)
+
+boundary = len(masks) if len(masks) < 15 else 15
+for i in range(boundary):
     better_cropped_mask(masks, i)
 
