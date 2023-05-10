@@ -23,11 +23,7 @@ image_input.addEventListener('change', function() {
     reader.readAsDataURL(this.files[0]);
 });
 
-// Tried this quickly but get 501 error, just for reference
-// function nextButton() {
-//     // logic for navigating to the next page
-//     window.location.href = 'next-page.html';
-// };
-
-// next_button_step1.addEventListener('click', nextButton);
+next_button_step1.addEventListener('click', function() {
+    window.location.href = "next-page.html";
+});
 

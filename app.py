@@ -28,6 +28,16 @@ model = pickle.load(open('models/model.pkl', 'rb'))
 def home():
     return render_template('index.html')
 
+@app.route("/next", methods=["POST", "GET"])
+def next():
+    return render_template("next-page.html")
+
+@app.route('/upload-image', methods=['POST'])
+def upload_image():
+    image_file = request.files['image_input']
+    #image_data = image_file.read()
+    return 'Image uploaded successfully!'
+
 #You can use the methods argument of the route() decorator to handle different HTTP methods.
 #GET: A GET message is send, and the server returns data
 #POST: Used to send HTML form data to the server.

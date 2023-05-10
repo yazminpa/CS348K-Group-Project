@@ -19,8 +19,8 @@
      If action is omitted, it assumed to be the current page -->
     <br>
     <br>
-    <form action="{{ url_for('predict')}}"method="post">
-    	<input type="file" id="image_input" required="required"/><br>
+    <!-- <form action="{{ url_for('upload_image') }}" method="POST" enctype="multipart/form-data"> -->
+    	<input type="file" id="image_input" name="image" required="required"/><br>
       <br>
       <div id="display_image"></div>
       <!-- <input type="text" name="input2" placeholder="Place for ML Image" required="required" /><p> -->
@@ -30,7 +30,7 @@
       <div class="next_button_step1_container">
         <button id="next_button_step1" type="submit" class="btn btn-primary btn-block btn-large">Next</button></p>
       </div>
-    </form>
+    <!-- </form> -->
 
    <br>
    <br>
