@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
   <title>Predictive Photoshop</title>
 </head>
 <body style="background: #000;">
@@ -11,7 +12,7 @@
     <h1 style="color:Violet;">Step 1: Upload your image here</h1>
     <br>
     <br>
-    <form id="image_form" enctype="multipart/form-data">
+    <form id="image_form" enctype="multipart/form-data" action="/upload-image" method="POST">
       <input type="file" id="image_input" name="image" required="required"/><br>
       <br>
       <div id="display_image"></div>
@@ -23,10 +24,7 @@
     </form>
     <br>
     <br>
-    <h4 style="color:Violet;">
-      {{ prediction_text }}
-    </h4>
   </div>
-  <script src="script.js"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

@@ -23,13 +23,21 @@ image_input.addEventListener('change', function() {
 });
 
 next_button_step1.addEventListener('click', function() {
-    // Store the image data in localStorage
-    localStorage.setItem('uploaded_image', uploaded_image);
-  
-    // Redirect to the next page
-    window.location.href = 'next-page.html';
-  });
-  
+  // Store the image data in localStorage
+  localStorage.setItem('uploaded_image', uploaded_image);
+
+  // Make an HTTP request to the Flask server
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/next-page', true);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      // Redirect to the next page
+      window.location.href = '/next-page';
+    }
+  };
+  xhr.send();
+});
+
   
   
   
