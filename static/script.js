@@ -1,5 +1,6 @@
 const image_input = document.querySelector('#image_input');
 const next_button_step1 = document.querySelector('#next_button_step1');
+const next_button_step2 = document.querySelector('#next_button_step2');
 let uploaded_image = "";
 
 // Upload and display image
@@ -33,6 +34,22 @@ next_button_step1.addEventListener('click', function() {
     if (xhr.readyState === 4 && xhr.status === 200) {
       // Redirect to the next page
       window.location.href = '/next-page';
+    }
+  };
+  xhr.send();
+});
+next_button_step2.addEventListener('click', function() {
+  console.log("Button clicked"); // Check if this message is logged in the browser console
+  // Store the image data in localStorage
+  localStorage.setItem('uploaded_image', uploaded_image);
+
+  // Make an HTTP request to the Flask server
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/third-page', true);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      // Redirect to the next page
+      window.location.href = '/third-page';
     }
   };
   xhr.send();

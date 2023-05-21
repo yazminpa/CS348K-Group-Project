@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Third Page</title>
+</head>
+<body>
+  <h1>Edit your image</h1>
+  <img id="uploaded_image" alt="Uploaded Image">
+
+  <div>
+    <label for="grayscale_slider">Grayscale: </label>
+    <input id="grayscale_slider" type="range" min="0" max="100" value="0">
+  </div>
+
+  <button id="save_button" type="button">Save Image</button>
+
+  <script>
+    // Retrieve the image data from localStorage
+    const uploadedImage = localStorage.getItem('uploaded_image');
+
+    // Create the img element
+    const imgElement = document.getElementById('uploaded_image');
+
+    // Set the image data as the source of the img element
+    imgElement.src = uploadedImage;
+
+    // Get grayscale slider and add event listener
+    const grayscaleSlider = document.getElementById('grayscale_slider');
+    grayscaleSlider.addEventListener('input', function() {
+      const value = this.value;
+
+      // Apply grayscale filter to the image
+      imgElement.style.filter = `grayscale(${value}%)`;
+    });
+
+    // Get save button and add event listener
+    const saveButton = document.getElementById('save_button');
+    saveButton.addEventListener('click', function() {
+      // Create a canvas element and draw the image on it
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      canvas.width = imgElement.width;
+      canvas.height = imgElement.height;
+      context.filter = imgElement.style.filter;
+      context.drawImage(imgElement, 0, 0);
+
+      // Convert the canvas to a data URL and save it
+      const dataURL = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = 'edited_image.png';
+      link.click();
+    });
+  </script>
+</body>
+</html>

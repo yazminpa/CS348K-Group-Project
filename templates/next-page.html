@@ -7,19 +7,33 @@
 </head>
 <body>
   <h1>Hello, world!</h1>
+  <div class="next_button_step1_container">
+    <button id="next_button_step2" type="button" class="btn btn-primary btn-block btn-large">Next</button>
+  </div>
   <p>This is the next page where you can process the uploaded image.</p>
   <img id="uploaded_image" alt="Uploaded Image">
 
   <script>
-    // Retrieve the image data from localStorage
-  	const uploadedImage = localStorage.getItem('uploaded_image');
+    const next_button_step2 = document.querySelector('#next_button_step2');
+    const uploadedImage = localStorage.getItem('uploaded_image');
+    const imgElement = document.getElementById('uploaded_image');
+    imgElement.src = uploadedImage;
 
-	// Create the img element
-	const imgElement = document.getElementById('uploaded_image');
+    next_button_step2.addEventListener('click', function() {
+      // Store the image data in localStorage
+      localStorage.setItem('uploaded_image', uploadedImage);
 
-	// Set the image data as the source of the img element
-	imgElement.src = uploadedImage;
-
+      // Make an HTTP request to the Flask server
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', '/third-page', true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          // Redirect to the next page
+          window.location.href = '/third-page';
+        }
+      };
+      xhr.send();
+    });
   </script>
 </body>
 </html>

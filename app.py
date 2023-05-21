@@ -15,6 +15,10 @@ def home():
 def next_page():
     return render_template('next-page.html')
 
+@app.route('/third-page')
+def third_page():
+    return render_template('third-page.html')
+
 @app.route('/upload-image', methods=['POST'])
 def upload_image():
     image_file = request.files['image']
