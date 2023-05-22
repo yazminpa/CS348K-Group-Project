@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import cv2
 from PIL import Image
 
-InputFileName = 'TestShape.jpg'
+InputFileName = 'testDog.jpg'
 InputFilePath = '/home/alisaazxh/' + InputFileName
 ModelCheckpointPath = "/home/alisaazxh/segment/sam_vit_h_4b8939.pth"
 # Display all masks in the image
@@ -77,6 +77,23 @@ def better_cropped_mask(anns, i):
     plt.axis('off')
     figureName = f'/home/alisaazxh/segment/' + InputFileName + f'{i}.jpg'
     plt.savefig(figureName)
+
+def remain_except_mask(anns, i):
+    sorted_anns = sorted(anns, key=(lambda x: x['area']), reverse=True)
+    image = cv2.imread(InputFilePath)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    m = sorted_anns[i]['segmentation']
+    for x in range(image.shape[0]):
+        for y in range(image.shape[1]):
+            if m[x][y] == True:
+                image[x][y][:] = 0
+    plt.figure(figsize=(20,20))
+    plt.imshow(image)
+    plt.axis('off')
+    figureName = f'/home/alisaazxh/segment/' + InputFileName + f'{i}.jpg'
+    plt.savefig(figureName)
+
+
     
 
 image = cv2.imread(InputFilePath)
@@ -116,7 +133,47 @@ print(masks[0].keys())
 #     figureName = f'/home/alisaazxh/segment/test{i}.jpg'
 #     plt.savefig(figureName)
 
-boundary = len(masks) if len(masks) < 15 else 15
+boundary = len(masks) if len(masks) < 5 else 5
+
+
+def detect_overlap(bboxMemo, i, j):
+    if j == i:
+        return False
+    if bboxMemo[i][0] > bboxMemo[j][0] + bboxMemo[j][2] or bboxMemo[j][0] > bboxMemo[i][0] + bboxMemo[i][2]:
+        return False
+    if bboxMemo[i][1] + bboxMemo[i][3] < bboxMemo[j][1] or bboxMemo[j][1] + bboxMemo[j][3] < bboxMemo[i][1]:
+        return False
+    return True
+
+# Erase the current layer and all layers that overlap with it in the boundary
+def crop_overlay(anns, boundary, i):
+    bboxMemo = []
+    overlay = [False] * boundary
+    sorted_anns = sorted(anns, key=(lambda x: x['area']), reverse=True)
+    for j in range(boundary):
+        bboxMemo.append(sorted_anns[j]['bbox'])
+    for j in range(boundary):
+        overlay[j] = detect_overlap(bboxMemo, i, j)
+    
+    image = cv2.imread(InputFilePath)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    m = sorted_anns[i]['segmentation']
+    for x in range(image.shape[0]):
+        for y in range(image.shape[1]):
+            if m[x][y] == True:
+                image[x][y][:] = 0
+    for j in range(len(overlay)):
+        if overlay[j]:
+            for x in range(image.shape[0]):
+                for y in range(image.shape[1]):
+                    if sorted_anns[j]['segmentation'][x][y] == True:
+                        image[x][y][:] = 0
+    plt.figure(figsize=(20,20))
+    plt.imshow(image)
+    plt.axis('off')
+    figureName = f'/home/alisaazxh/segment/testDog/' + InputFileName + f'{i}.jpg'
+    plt.savefig(figureName)
+
 for i in range(boundary):
-    better_cropped_mask(masks, i)
+    crop_overlay(masks, boundary, i)
 
