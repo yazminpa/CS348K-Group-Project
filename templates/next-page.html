@@ -3,15 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Next Page</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <title>Predictive Photoshop</title>
 </head>
-<body>
-  <h1>Hello, world!</h1>
-  <div class="next_button_step1_container">
-    <button id="next_button_step2" type="button" class="btn btn-primary btn-block btn-large">Next</button>
+
+<body style="background: #000;">
+  <h1 style="color:Violet;">Step 2: Choose Segmented Layers to Perform Object Completion</h1>
+  <p style="color:white;">This is the next page where you can process the uploaded image.</p>
+  <h3 style="color:Violet;">Original Image:</h3>
+    <img id="uploaded_image" alt="Uploaded Image">
+  <h3 style="color:Violet;">Segmented Layers from Image:</h3>
+  <div class="image-grid">
+    <div class="image-item">
+      <img src="{{ url_for('get_image', image_name='testDog.jpg') }}" alt="Image">
+      <button class="image-button" onclick="toggleButton(this)">Pick</button>
+    </div>
+    <div class="image-item">
+      <img src="{{ url_for('get_image', image_name='testDog.jpg') }}" alt="Image">
+      <button class="image-button" onclick="toggleButton(this)">Pick</button>
+    </div>
+    <div class="image-item">
+      <img src="{{ url_for('get_image', image_name='testDog.jpg') }}" alt="Image">
+      <button class="image-button" onclick="toggleButton(this)">Pick</button>
+    </div>
+    <div class="image-item">
+      <img src="{{ url_for('get_image', image_name='testDog.jpg') }}" alt="Image">
+      <button class="image-button" onclick="toggleButton(this)">Pick</button>
+    </div>
+    <div class="image-item">
+      <img src="{{ url_for('get_image', image_name='testDog.jpg') }}" alt="Image">
+      <button class="image-button" onclick="toggleButton(this)">Pick</button>
+    </div>
+    <div class="image-item">
+      <img src="{{ url_for('get_image', image_name='testDog.jpg') }}" alt="Image">
+      <button class="image-button" onclick="toggleButton(this)">Pick</button>
+    </div>
   </div>
-  <p>This is the next page where you can process the uploaded image.</p>
-  <img id="uploaded_image" alt="Uploaded Image">
+  <br>
+  <br>
+  <div class="next_button_step2_container">
+    <button id="next_button_step2" type="button" class="btn btn-primary btn-block btn-large">Complete Layers</button>
+  </div>
+  
 
   <script>
     const next_button_step2 = document.querySelector('#next_button_step2');
@@ -35,5 +68,6 @@
       xhr.send();
     });
   </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

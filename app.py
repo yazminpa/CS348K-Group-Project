@@ -1,8 +1,8 @@
 import numpy as np
-from flask import Flask, request, render_template, session
+from flask import Flask, request, render_template, session, send_from_directory
 import pickle
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static', static_folder='static')
 app.secret_key = 'your_secret_key'  # Set a secret key for session encryption
 
 # model = pickle.load(open('models/model.pkl', 'rb'))
@@ -18,6 +18,10 @@ def next_page():
 @app.route('/third-page')
 def third_page():
     return render_template('third-page.html')
+
+@app.route('/temp/<path:image_name>')
+def get_image(image_name):
+    return send_from_directory('temp', image_name)
 
 @app.route('/upload-image', methods=['POST'])
 def upload_image():

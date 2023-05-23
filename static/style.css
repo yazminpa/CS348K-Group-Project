@@ -4,7 +4,6 @@ body{
     align-items: center;
     gap: 10px;  
     flex-direction: column;
-    height: 100vh;
 }
 
 .next_button_step1_container{
@@ -17,6 +16,23 @@ body{
     font-size: 28px;
     height: 50px;
     width: 100px;
+}
+
+.next_button_step2_container{
+    text-align: center;
+}
+
+#next_button_step2{
+    background-color:white;
+    color: violet;
+    font-size: 28px;
+    height: 50px;
+    width: 280px;
+}
+
+#next_button_step2:hover{
+    background-color: violet;
+    color: white;
 }
 
 #next_button_step1:hover{
@@ -39,4 +55,40 @@ body{
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 20px;
+    margin-top: 10px;
+}
+
+.image-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+.image-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid white;
+    display: flex;
+}
+
+.image-item button {
+    margin-top: 10px;
+    background-color:white;
+    color: violet;
+    font-size: 16px;
+    height: 30px;
+    width: 120px;
+}
+
+.image-item button:hover{
+    background-color: violet;
+    color: white;
 }
