@@ -15,11 +15,13 @@
     <form id="image_form" enctype="multipart/form-data" action="/upload-image" method="POST">
       <input type="file" id="image_input" name="image" required="required"/><br>
       <br>
-      <div id="display_image"></div>
+      <div id="display_image">
+        <img id="display_image_img" src="" alt="Uploaded Image">
+      </div>
       <br>
       <br>
       <div class="next_button_step1_container">
-        <button id="next_button_step1" type="button" class="btn btn-primary btn-block btn-large">Next</button></p>
+        <button id="next_button_step1" type="button" class="btn btn-primary btn-block btn-large">Next</button>
       </div>
     </form>
     <br>
