@@ -10,64 +10,35 @@
 <body style="background: #000;">
   <h1 style="color:Violet;">Step 2: Choose Segmented Layers to Perform Object Completion</h1>
   <p style="color:white;">This is the next page where you can process the uploaded image.</p>
+  
   <h3 style="color:Violet;">Original Image:</h3>
-    <img id="uploaded_image" alt="Uploaded Image">
+  <img id="uploaded_image" alt="Uploaded Image" src="" onload="loadUploadedImage()">
+  
   <h3 style="color:Violet;">Segmented Layers from Image:</h3>
   <div class="image-grid">
     <div class="image-item">
-      <img src="{{ url_for('get_image', image_name='testDog.jpg') }}" alt="Image">
+      <img id="segmented_image1" class="segmented-image" alt="Segmented Image 1" src="" onload="loadUploadedImage()">
       <button class="image-button" onclick="toggleButton(this)">Pick</button>
     </div>
     <div class="image-item">
-      <img src="{{ url_for('get_image', image_name='testDog.jpg') }}" alt="Image">
+      <img id="segmented_image2" class="segmented-image" alt="Segmented Image 2" src="" onload="loadUploadedImage()">
       <button class="image-button" onclick="toggleButton(this)">Pick</button>
     </div>
     <div class="image-item">
-      <img src="{{ url_for('get_image', image_name='testDog.jpg') }}" alt="Image">
+      <img id="segmented_image3" class="segmented-image" alt="Segmented Image 3" src="" onload="loadUploadedImage()">
       <button class="image-button" onclick="toggleButton(this)">Pick</button>
     </div>
-    <div class="image-item">
-      <img src="{{ url_for('get_image', image_name='testDog.jpg') }}" alt="Image">
-      <button class="image-button" onclick="toggleButton(this)">Pick</button>
-    </div>
-    <div class="image-item">
-      <img src="{{ url_for('get_image', image_name='testDog.jpg') }}" alt="Image">
-      <button class="image-button" onclick="toggleButton(this)">Pick</button>
-    </div>
-    <div class="image-item">
-      <img src="{{ url_for('get_image', image_name='testDog.jpg') }}" alt="Image">
-      <button class="image-button" onclick="toggleButton(this)">Pick</button>
-    </div>
+    <!-- Add more segmented layers as needed. Beware that loadUploadedImage() function is modified to accept 
+      the id of the image element to load.
+      You will need to update the JavaScript code accordingly to handle the different image elements. -->
   </div>
+  
   <br>
   <br>
+  
   <div class="next_button_step2_container">
     <button id="next_button_step2" type="button" class="btn btn-primary btn-block btn-large">Complete Layers</button>
   </div>
-  
-
-  <script>
-    const next_button_step2 = document.querySelector('#next_button_step2');
-    const uploadedImage = localStorage.getItem('uploaded_image');
-    const imgElement = document.getElementById('uploaded_image');
-    imgElement.src = uploadedImage;
-
-    next_button_step2.addEventListener('click', function() {
-      // Store the image data in localStorage
-      localStorage.setItem('uploaded_image', uploadedImage);
-
-      // Make an HTTP request to the Flask server
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', '/third-page', true);
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          // Redirect to the next page
-          window.location.href = '/third-page';
-        }
-      };
-      xhr.send();
-    });
-  </script>
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

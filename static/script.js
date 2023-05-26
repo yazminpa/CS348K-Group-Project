@@ -1,59 +1,95 @@
-const image_input = document.querySelector('#image_input');
-const next_button_step1 = document.querySelector('#next_button_step1');
-//const next_button_step2 = document.querySelector('#next_button_step2');
-let uploaded_image = "";
+const imageInput = document.querySelector('#image_input');
+const imgElement = document.querySelector('#display_image_img');
+const uploadedImageElement = document.querySelector('#uploaded_image');
+const segmentedImageElements = document.querySelectorAll('.segmented-image');
 
-// Upload and display image
-image_input.addEventListener('change', function() {
-  const reader = new FileReader();
-  reader.addEventListener('load', () => {
-    uploaded_image = reader.result;
-    document.querySelector('#display_image').style.backgroundImage = `url(${uploaded_image})`;
-    const img = new Image();
-    img.src = uploaded_image;
-    img.onload = function() {
-      const display_width = document.querySelector('#display_image').offsetWidth;
-      const display_height = document.querySelector('#display_image').offsetHeight;
-      const img_width = img.width;
-      const img_height = img.height;
-      const scale = Math.min(display_width / img_width, display_height / img_height);
-      document.querySelector('#display_image').style.backgroundSize = `${scale * img_width}px ${scale * img_height}px`;
-    }
+if (imageInput && imgElement) {
+  imageInput.addEventListener('change', function(event) {
+    const file = event.target.files[0];
+
+    // Create a FileReader to read the image file
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      imgElement.src = e.target.result; // Set the source of the <img> element to the loaded image
+    };
+    reader.readAsDataURL(file); // Read the file as a data URL
   });
-  reader.readAsDataURL(this.files[0]);
-});
+}
 
-next_button_step1.addEventListener('click', function() {
-  // Store the image data in localStorage
-  localStorage.setItem('uploaded_image', uploaded_image);
+const nextButtonStep1 = document.querySelector('#next_button_step1');
 
-  // Make an HTTP request to the Flask server
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', '/next-page', true);
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-      // Redirect to the next page
-      window.location.href = '/next-page';
-    }
-  };
-  xhr.send();
-});
-// next_button_step2.addEventListener('click', function() {
-//   console.log("Button clicked"); // Check if this message is logged in the browser console
-//   // Store the image data in localStorage
-//   localStorage.setItem('uploaded_image', uploaded_image);
+if (nextButtonStep1) {
+  nextButtonStep1.addEventListener('click', function() {
+    // Store the image data in sessionStorage
+    const uploadedImage = imgElement.src;
+    sessionStorage.setItem('uploaded_image', uploadedImage);
+    console.log("In 1");
 
-//   // Make an HTTP request to the Flask server
-//   var xhr = new XMLHttpRequest();
-//   xhr.open('GET', '/third-page', true);
-//   xhr.onreadystatechange = function() {
-//     if (xhr.readyState === 4 && xhr.status === 200) {
-//       // Redirect to the next page
-//       window.location.href = '/third-page';
-//     }
-//   };
-//   xhr.send();
-// });
+    // Make an HTTP request to the Flask server
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/next-page', true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        // Redirect to the next page
+        window.location.href = '/next-page';
+      }
+    };
+    xhr.send();
+  });
+}
+const CompleteSegButton = document.querySelector('#next_button_step2');
+
+if (CompleteSegButton) {
+  CompleteSegButton.addEventListener('click', function() {
+    // Make an HTTP request to the Flask server
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/third-page', true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        // Redirect to the next page
+        window.location.href = '/third-page';
+      }
+    };
+    xhr.send();
+  });
+} else {
+  console.log("Not complete segment button");
+}
+
+const currentPage = window.location.pathname; // Get the current page URL path
+
+if (currentPage.includes('next-page') || currentPage.includes('third-page')) {
+  loadUploadedImage();
+} else {
+  console.log("Not in current path");
+}
+
+function loadUploadedImage() {
+  const uploadedImage = sessionStorage.getItem('uploaded_image');
+  if (uploadedImage) {
+    uploadedImageElement.src = uploadedImage;
+  } else {
+    console.log("No image data found in sessionStorage");
+  }
+
+  // Load segmented images
+ 
+  segmentedImageElements.forEach(function(imageElement) {
+    imageElement.src = uploadedImage; 
+  });
+  // you can use the code below for when the images are all different 
+  // Set the source of each segmented image element to the uploaded image 
+  // segmentedImageElements.forEach(function(imageElement, index) {
+  //   // const segmentedImageId = 'segmented_image' + (index + 1);
+  //   // const segmentedImage = sessionStorage.getItem(segmentedImageId);
+  //   const segmentedImage = sessionStorage.getItem('uploaded_image');
+  //   if (segmentedImage) {
+  //     imageElement.src = segmentedImage;
+  //   } else {
+  //     console.log("No segmented image " + (index + 1) + " data found in sessionStorage");
+  //   }
+  // });
+}
 
 function toggleButton(button) {
   if (button.innerHTML === 'Pick') {
