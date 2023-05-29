@@ -89,6 +89,43 @@ function loadUploadedImage() {
   //     console.log("No segmented image " + (index + 1) + " data found in sessionStorage");
   //   }
   // });
+
+  if (currentPage.includes('third-page')) {
+    // Get grayscale slider and add event listener
+    // Get grayscale slider and add event listener
+    const grayscaleSlider = document.getElementById('grayscale_slider');
+    grayscaleSlider.addEventListener('input', function() {
+      const value = this.value;
+
+      // Apply grayscale filter to the image
+      uploadedImageElement.style.filter = `grayscale(${value}%)`;
+    });
+
+
+    // Get save button and add event listener
+    const saveButton = document.getElementById('save_button');
+    saveButton.addEventListener('click', function() {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      const ImageElement = new Image();
+    
+      ImageElement.onload = function() {
+        canvas.width = ImageElement.width;
+        canvas.height = ImageElement.height;
+        context.filter = ImageElement.style.filter;
+        context.drawImage(ImageElement, 0, 0);
+        
+        const dataURL = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = dataURL;
+        link.download = 'edited_image.png';
+        link.click();
+      };
+    
+      ImageElement.src = uploadedImage;
+    });
+    
+  }
 }
 
 function toggleButton(button) {
@@ -98,5 +135,8 @@ function toggleButton(button) {
   } else {
     button.innerHTML = 'Pick';
     button.style.backgroundColor = 'white';
-  }
+    }
+
+  
+    
 }
