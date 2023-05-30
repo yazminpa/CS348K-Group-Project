@@ -14,6 +14,11 @@
     <input id="grayscale_slider" type="range" min="0" max="100" value="0">
   </div>
 
+  <div>
+    <label for="contrast_slider">Contrast: </label>
+    <input id="contrast_slider" type="range" min="-100" max="100" value="0">
+  </div>
+
   <button id="save_button" type="button">Save Image</button>
 
   <script src="{{ url_for('static', filename='script.js') }}"></script>
