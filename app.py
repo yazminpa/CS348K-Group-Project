@@ -3,18 +3,15 @@ from flask import Flask, request, render_template, session, send_from_directory,
 import pickle
 import torch
 import base64
-<<<<<<< HEAD
 from PIL import Image, ImageEnhance, ImageOps
 import io
 
 
 
-=======
 from segment.segmentAnything import better_cropped_mask
 from segment_anything import sam_model_registry, SamAutomaticMaskGenerator, SamPredictor
 # from lama_inpaint import inpaint_img_with_lama, build_lama_model, inpaint_img_with_builded_lama
 from utils.utils import load_img_to_array, load_base64_to_array, load_array_to_base64
->>>>>>> e3f8c1fe7e61c5deb62246fb6216098750d3c757
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 app.secret_key = 'your_secret_key'  # Set a secret key for session encryption
