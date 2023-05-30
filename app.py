@@ -41,7 +41,7 @@ def upload_image():
     session['uploaded_image'] = base64.b64encode(image_data).decode('utf-8')  # Store the base64-encoded image data in the session
     return base64.b64encode(image_data).decode('utf-8')
 
-@app.route('/predict', methods=['POST'])
+@app.route('/predict', methods=['GET'])
 def predict():
     uploaded_image_base64 = session.get('uploaded_image')  # Retrieve the base64-encoded image data from the session
     if uploaded_image_base64 is None:
