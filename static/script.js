@@ -30,6 +30,22 @@ function dataURLtoFile(dataURL, filename) {
 }
 
 
+const testButton = document.querySelector('#test_button');
+if (testButton) {
+  testButton.addEventListener('click', function() {
+    // Make an HTTP request to the Flask server
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/predict', true);
+    xhr.onload = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        var response = JSON.parse(xhr.responseText);
+        console.log(response.message);
+      }
+    };
+    xhr.send();
+  });
+}
+
 const nextButtonStep1 = document.querySelector('#next_button_step1');
 
 if (nextButtonStep1) {

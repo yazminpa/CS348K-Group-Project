@@ -4,8 +4,8 @@ import pickle
 import base64
 from PIL import Image, ImageEnhance, ImageOps
 import io
-import binascii
-import imghdr
+
+
 
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
