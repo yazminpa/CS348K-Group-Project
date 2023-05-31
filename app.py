@@ -1,17 +1,17 @@
 import numpy as np
 from flask import Flask, request, render_template, session, send_from_directory, Response
 import pickle
-import torch
+# import torch
 import base64
 from PIL import Image, ImageEnhance, ImageOps
 import io
 
 
 
-from segment.segmentAnything import better_cropped_mask
-from segment_anything import sam_model_registry, SamAutomaticMaskGenerator, SamPredictor
-# from lama_inpaint import inpaint_img_with_lama, build_lama_model, inpaint_img_with_builded_lama
-from utils.utils import load_img_to_array, load_base64_to_array, load_array_to_base64
+# from segment.segmentAnything import better_cropped_mask
+# from segment_anything import sam_model_registry, SamAutomaticMaskGenerator, SamPredictor
+# # from lama_inpaint import inpaint_img_with_lama, build_lama_model, inpaint_img_with_builded_lama
+# from utils.utils import load_img_to_array, load_base64_to_array, load_array_to_base64
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 app.secret_key = 'your_secret_key'  # Set a secret key for session encryption
@@ -78,40 +78,40 @@ def upload_image():
     session['uploaded_image'] = base64.b64encode(image_data).decode('utf-8')  # Store the base64-encoded image data in the session
     return base64.b64encode(image_data).decode('utf-8')
 
-@app.route('/predict', methods=['GET'])
-def predict():
-    uploaded_image_base64 = session.get('uploaded_image')  # Retrieve the base64-encoded image data from the session
-    if uploaded_image_base64 is None:
-        return "No image data found."
+# @app.route('/predict', methods=['GET'])
+# def predict():
+#     uploaded_image_base64 = session.get('uploaded_image')  # Retrieve the base64-encoded image data from the session
+#     if uploaded_image_base64 is None:
+#         return "No image data found."
     
-    # Process the uploaded image with the model
-    image_array = load_base64_to_array(uploaded_image_base64)
+#     # Process the uploaded image with the model
+#     image_array = load_base64_to_array(uploaded_image_base64)
 
-    # segement the image and get the top ten objects 
-    # Load models
-    model = {}
-    # build the sam model
-    model_type="vit_h"
-    sam_ckpt="./pretrained_models/sam_vit_h_4b8939.pth"
-    model_sam = sam_model_registry[model_type](checkpoint=sam_ckpt)
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    model_sam.to(device=device)
-    model['sam'] = SamPredictor(model_sam)
+#     # segement the image and get the top ten objects 
+#     # Load models
+#     model = {}
+#     # build the sam model
+#     model_type="vit_h"
+#     sam_ckpt="./pretrained_models/sam_vit_h_4b8939.pth"
+#     model_sam = sam_model_registry[model_type](checkpoint=sam_ckpt)
+#     device = "cuda" if torch.cuda.is_available() else "cpu"
+#     model_sam.to(device=device)
+#     model['sam'] = SamPredictor(model_sam)
 
-    mask_generator = SamAutomaticMaskGenerator(model_sam)
-    masks = mask_generator.generate(image_array)
+#     mask_generator = SamAutomaticMaskGenerator(model_sam)
+#     masks = mask_generator.generate(image_array)
 
-    numMasks = len(masks) if len(masks) < 10 else 10
-    segments = []
+#     numMasks = len(masks) if len(masks) < 10 else 10
+#     segments = []
 
-    for i in range(numMasks):
-        segmentname = "segment" + str(i)
-        session[segmentname] = load_array_to_base64(better_cropped_mask(masks, i, image_array)) 
-        # segments.append(better_cropped_mask(masks, i, image_array))
+#     for i in range(numMasks):
+#         segmentname = "segment" + str(i)
+#         session[segmentname] = load_array_to_base64(better_cropped_mask(masks, i, image_array)) 
+#         # segments.append(better_cropped_mask(masks, i, image_array))
 
-    # segments : the top ten objects in the image-> should be displayed in the next page 
+#     # segments : the top ten objects in the image-> should be displayed in the next page 
 
-    return render_template('index.html', prediction_text='Final image prediction: ...')
+#     return render_template('index.html', prediction_text='Final image prediction: ...')
 
 if __name__ == '__main__':
     app.run(debug=True)  # Enable debug mode
