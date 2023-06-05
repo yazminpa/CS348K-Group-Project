@@ -7,6 +7,9 @@ const imgElement = document.querySelector('#display_image_img');
 const uploadedImageElement = document.querySelector('#uploaded_image');
 const segmentedImageElements = document.querySelectorAll('.segmented-image');
 const contrastSlider = document.getElementById('contrast_slider');
+const blurSlider = document.getElementById('blur_slider');
+const brightnessSlider = document.getElementById('brightness_slider');
+const contrastSliderjs = document.getElementById('contrast_slider_js');
 let file; // Declare the file variable here
 
 
@@ -151,15 +154,8 @@ function loadUploadedImage() {
  // });
  if (contrastSlider) {
    // Add an event listener to the contrast slider
-   let contrastTimeout;
    contrastSlider.addEventListener('input', function() {
      const contrast = this.value;
-  
-     // Clear the previous timeout
-     clearTimeout(contrastTimeout);
-  
-     // Set a new timeout of 2 seconds
-     contrastTimeout = setTimeout(() => {
        // Create a FormData object
        // Convert base64 string to Blob object
        const imageData = dataURItoBlob(uploadedImage);
@@ -174,20 +170,22 @@ function loadUploadedImage() {
          .then(response => response.text())
          .then(encodedImage => {
            console.log("Received encoded image:", encodedImage);
-  
            // Handle the response containing the adjusted image
-           // Set the source of the <img> element to the adjusted image
-           if (encodedImage === "No image data received") {
-             console.log("Error: No image data received");
-           } else {
-             uploadedImageElement.src = 'data:image/png;base64,' + encodedImage;
-             console.log("Updated image source:", uploadedImageElement.src);
-           }
+          // Set the source of the <img> element to the adjusted image
+          if (encodedImage === "No image data received") {
+            console.log("Error: No image data received");
+          } else {
+            const adjustedImage = new Image();
+            adjustedImage.onload = function() {
+              uploadedImageElement.src = adjustedImage.src;
+              console.log("Updated image source:", uploadedImageElement.src);
+            };
+            adjustedImage.src = 'data:image/png;base64,' + encodedImage;
+          }
          })
          .catch(error => {
            console.log('Error adjusting contrast:', error);
          });
-     }, 2000); // 2-second delay
    });
   
   
@@ -233,6 +231,24 @@ function loadUploadedImage() {
    });
   
  }
+}
+
+if (blurSlider && brightnessSlider && contrastSliderjs) {
+  // Add event listeners to the sliders
+  blurSlider.addEventListener('input', function() {
+    const blurValue = this.value;
+    uploadedImageElement.style.filter = `blur(${blurValue}px)`;
+  });
+
+  brightnessSlider.addEventListener('input', function() {
+    const brightnessValue = this.value;
+    uploadedImageElement.style.filter = `brightness(${brightnessValue}%)`;
+  });
+
+  contrastSliderjs.addEventListener('input', function() {
+    const contrastValue = this.value;
+    uploadedImageElement.style.filter = `contrast(${contrastValue}%)`;
+  });
 }
 
 

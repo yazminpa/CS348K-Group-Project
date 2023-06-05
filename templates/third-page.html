@@ -6,7 +6,7 @@
   <title>Third Page</title>
 </head>
 <body>
-  <h1>Edit your image</h1>
+  <h1>Edit your Layer(s)</h1>
   <img id="uploaded_image" alt="Uploaded Image" src="" onload="loadUploadedImage()">
 
   <div>
@@ -15,9 +15,24 @@
   </div>
 
   <div>
-    <label for="contrast_slider">Contrast: </label>
-    <input id="contrast_slider" type="range" min="-100" max="100" value="0">
+    <label for="blur_slider">Blur: </label>
+    <input id="blur_slider" type="range" min="0" max="10" value="0">
   </div>
+
+  <div>
+    <label for="brightness_slider">Brightness: </label>
+    <input id="brightness_slider" type="range" min="0" max="200" value="100">
+  </div>
+
+  <div>
+    <label for="contrast_slider_js">Contrast: </label>
+    <input id="contrast_slider_js" type="range" min="-100" max="100" value="0">
+  </div>
+
+  <!-- <div>
+    <label for="contrast_slider">Contrast (using diy algorithm, not working well): </label>
+    <input id="contrast_slider" type="range" min="-100" max="100" value="0">
+  </div> -->
 
   <button id="save_button" type="button">Save Image</button>
 
