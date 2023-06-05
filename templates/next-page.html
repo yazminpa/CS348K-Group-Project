@@ -7,7 +7,7 @@
   <title>Predictive Photoshop</title>
 </head>
 
-<body style="background: #000;">
+<body style="background: #827878;">
   <h1 style="color:Violet;">Step 2: Choose Segmented Layers to Perform Object Completion</h1>
   <p style="color:white;">This is the next page where you can process the uploaded image.</p>
   
@@ -19,18 +19,10 @@
   </div>
   
   <h3 style="color:Violet;">Segmented Layers from Image:</h3>
-  <div class="image-grid">
+  <div class="image-grid" id="image-grid">
     <div class="image-item">
       <!-- <img id="segmented_image1" class="segmented-image" alt="Segmented Image 1" src="" onload="loadUploadedImage()"> -->
       <img id="segment0" class="segmented-image" alt="Segmented Image 1" src="" onload="loadUploadedImage()">
-      <button class="image-button" onclick="toggleButton(this)">Pick</button>
-    </div>
-    <div class="image-item">
-      <img id="segment1" class="segmented-image" alt="Segmented Image 2" src="" onload="loadUploadedImage()">
-      <button class="image-button" onclick="toggleButton(this)">Pick</button>
-    </div>
-    <div class="image-item">
-      <img id="segment2" class="segmented-image" alt="Segmented Image 3" src="" onload="loadUploadedImage()">
       <button class="image-button" onclick="toggleButton(this)">Pick</button>
     </div>
     <!-- Add more segmented layers as needed. Beware that loadUploadedImage() function is modified to accept 

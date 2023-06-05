@@ -152,115 +152,94 @@ function loadUploadedImage() {
  //     console.log("No segmented image " + (index + 1) + " data found in sessionStorage");
  //   }
  // });
- if (contrastSlider) {
-   // Add an event listener to the contrast slider
-   contrastSlider.addEventListener('input', function() {
-     const contrast = this.value;
-       // Create a FormData object
-       // Convert base64 string to Blob object
-       const imageData = dataURItoBlob(uploadedImage);
-       const formData = new FormData();
-       formData.append('imageData', imageData);
-       formData.append('contrast', contrast);
-       // Send the request to the server for contrast adjustment
-       fetch('/adjust-contrast-server', {
-         method: 'POST',
-         body: formData
-       })
-         .then(response => response.text())
-         .then(encodedImage => {
-           console.log("Received encoded image:", encodedImage);
-           // Handle the response containing the adjusted image
-          // Set the source of the <img> element to the adjusted image
-          if (encodedImage === "No image data received") {
-            console.log("Error: No image data received");
-          } else {
-            const adjustedImage = new Image();
-            adjustedImage.onload = function() {
-              uploadedImageElement.src = adjustedImage.src;
-              console.log("Updated image source:", uploadedImageElement.src);
-            };
-            adjustedImage.src = 'data:image/png;base64,' + encodedImage;
-          }
-         })
-         .catch(error => {
-           console.log('Error adjusting contrast:', error);
-         });
-   });
+// Get the user input
+const userInput_ = 5; // Replace with your actual user input
+
+// Get the container where the image items will be appended
+const imageGrid = document.getElementById('image-grid');
+
+  // Check if the image items already exist
+  const existingImageItems = imageGrid.querySelectorAll('.image-item');
+  if (existingImageItems.length < userInput_) {
+    // Generate and append the image items
+    for (let i = 0; i < userInput_; i++) {
+      // Create the image item div
+      const imageItem = document.createElement('div');
+      imageItem.classList.add('image-item');
+
+      // Create the segmented image element
+      const segmentedImage = document.createElement('img');
+      segmentedImage.id = 'segment' + i;
+      segmentedImage.classList.add('segmented-image');
+      segmentedImage.alt = 'Segmented Image ' + (i + 1);
+      segmentedImage.src = uploadedImage;
+
+        // Create the button element
+        const button = document.createElement('button');
+        button.classList.add('image-button');
+        button.textContent = 'Pick';
+        button.addEventListener('click', function() {
+          toggleButton(this, imageItem);
+        });
+        // Create the menu element
+        const menu = document.createElement('div');
+        menu.classList.add('menu');
+        menu.style.display = 'none'; // Hide the menu initially
   
+        // Create menu items
+        const menuItem1 = document.createElement('div');
+        menuItem1.textContent = 'Item 1';
+        const menuItem2 = document.createElement('div');
+        menuItem2.textContent = 'Item 2';
   
- }
-
-
- if (currentPage.includes('third-page')) {
-   // Get grayscale slider and add event listener
-   // Get grayscale slider and add event listener
-   const grayscaleSlider = document.getElementById('grayscale_slider');
-   grayscaleSlider.addEventListener('input', function() {
-     const value = this.value;
-
-
-     // Apply grayscale filter to the image
-     uploadedImageElement.style.filter = `grayscale(${value}%)`;
-   });
-
-
-
+        // Append menu items to the menu
+        menu.appendChild(menuItem1);
+        menu.appendChild(menuItem2);
+  
+        // Append the segmented image, button, and menu to the image item div
+        imageItem.appendChild(segmentedImage);
+        imageItem.appendChild(button);
+        imageItem.appendChild(menu);
+      // Append the image item div to the image grid container
+        imageGrid.appendChild(imageItem);
+    }
+  }
 
    // Get save button and add event listener
-   const saveButton = document.getElementById('save_button');
-   saveButton.addEventListener('click', function() {
-     const canvas = document.createElement('canvas');
-     const context = canvas.getContext('2d');
-     const ImageElement = new Image();
+  //  const saveButton = document.getElementById('save_button');
+  //  saveButton.addEventListener('click', function() {
+  //    const canvas = document.createElement('canvas');
+  //    const context = canvas.getContext('2d');
+  //    const ImageElement = new Image();
   
-     ImageElement.onload = function() {
-       canvas.width = ImageElement.width;
-       canvas.height = ImageElement.height;
-       context.filter = ImageElement.style.filter;
-       context.drawImage(ImageElement, 0, 0);
+  //    ImageElement.onload = function() {
+  //      canvas.width = ImageElement.width;
+  //      canvas.height = ImageElement.height;
+  //      context.filter = ImageElement.style.filter;
+  //      context.drawImage(ImageElement, 0, 0);
       
-       const dataURL = canvas.toDataURL('image/png');
-       const link = document.createElement('a');
-       link.href = dataURL;
-       link.download = 'edited_image.png';
-       link.click();
-     };
+  //      const dataURL = canvas.toDataURL('image/png');
+  //      const link = document.createElement('a');
+  //      link.href = dataURL;
+  //      link.download = 'edited_image.png';
+  //      link.click();
+  //    };
   
-     ImageElement.src = uploadedImage;
-   });
-  
- }
+  //    ImageElement.src = uploadedImage;
+  //  });
 }
 
-if (blurSlider && brightnessSlider && contrastSliderjs) {
-  // Add event listeners to the sliders
-  blurSlider.addEventListener('input', function() {
-    const blurValue = this.value;
-    uploadedImageElement.style.filter = `blur(${blurValue}px)`;
-  });
-
-  brightnessSlider.addEventListener('input', function() {
-    const brightnessValue = this.value;
-    uploadedImageElement.style.filter = `brightness(${brightnessValue}%)`;
-  });
-
-  contrastSliderjs.addEventListener('input', function() {
-    const contrastValue = this.value;
-    uploadedImageElement.style.filter = `contrast(${contrastValue}%)`;
-  });
+function toggleButton(button, imageItem) {
+  const menu = imageItem.querySelector('.menu');
+  if (button.innerHTML === 'Pick') {
+    button.innerHTML = 'Layer Picked';
+    button.style.backgroundColor = 'gray';
+    menu.style.display = 'block'; // Show the menu
+  } else {
+    button.innerHTML = 'Pick';
+    button.style.backgroundColor = 'white';
+    menu.style.display = 'none'; // Hide the menu
+  }
 }
 
 
-function toggleButton(button) {
- if (button.innerHTML === 'Pick') {
-   button.innerHTML = 'Layer Picked';
-   button.style.backgroundColor = 'gray';
- } else {
-   button.innerHTML = 'Pick';
-   button.style.backgroundColor = 'white';
-   }
-
-
-   
-}
