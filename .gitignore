@@ -3,6 +3,7 @@ Inputs/
 results/
 pretrained_models/
 lama/
+uploads/
 # C/C++ object files/libraries
 *.o
 *.so

@@ -6,20 +6,23 @@ import base64
 from PIL import Image, ImageEnhance, ImageOps
 import io
 from flask_uploads import IMAGES, UploadSet, configure_uploads
-
+import torch
+import cv2
 
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import SubmitField
-# from segment.segmentAnything import better_cropped_mask
-# from segment_anything import sam_model_registry, SamAutomaticMaskGenerator, SamPredictor
-# # from lama_inpaint import inpaint_img_with_lama, build_lama_model, inpaint_img_with_builded_lama
-# from utils.utils import load_img_to_array, load_base64_to_array, load_array_to_base64
+
+
+from segment.segmentAnything import better_cropped_mask
+from segment_anything import sam_model_registry, SamAutomaticMaskGenerator, SamPredictor
+# from lama_inpaint import inpaint_img_with_lama, build_lama_model, inpaint_img_with_builded_lama
+from utils.utils import load_img_to_array, load_base64_to_array, load_array_to_base64
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 app.secret_key = 'your_secret_key'  # Set a secret key for session encryption
 app.config['UPLOADED_PHOTO'] = 'uploads'
-app.config['UPLOADED_PHOTOS_DEST'] = '/Users/yazminpadilla/CS348K-Group-Project/uploads'
+app.config['UPLOADED_PHOTOS_DEST'] = './uploads'
 
 
 photos = UploadSet('photos', IMAGES)
@@ -46,8 +49,6 @@ def upload_image():
     else:
         session['file_url'] = None
     return render_template('index.html', form=form, file_url=session.get('file_url'))
-
-
 
 
 # model = pickle.load(open('models/model.pkl', 'rb'))
@@ -116,14 +117,22 @@ def adjust_contrast_server():
 
 @app.route('/predict', methods=['GET'])
 def predict():
-    uploaded_image_base64 = session.get('uploaded_image')  # Retrieve the base64-encoded image data from the session
-    if uploaded_image_base64 is None:
-        return "No image data found."
+    # uploaded_image_base64 = session.get('uploaded_image')  # Retrieve the base64-encoded image data from the session
+    # if uploaded_image_base64 is None:
+    #     return "No image data found."
     
     # Process the uploaded image with the model
-    # image_array = load_base64_to_array(uploaded_image_base64)
-    image_file = request.files['imageData']
-    print(image_file)
+
+    input_path = '/Users/xfwu/Documents/GitHub/CS348K-Group-Project/uploads/small.png'
+    img = cv2.imread(input_path)
+    image_file = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    
+    if image_file is None:
+        return "No image data found."
+    print("finally image_file is not None")
+
+    image_array = np.array(image_file)
+
     # segement the image and get the top ten objects 
     # Load models
     model = {}
@@ -134,16 +143,20 @@ def predict():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model_sam.to(device=device)
     model['sam'] = SamPredictor(model_sam)
-
+    print("model_sam is loaded")
     mask_generator = SamAutomaticMaskGenerator(model_sam)
     masks = mask_generator.generate(image_array)
+    print("masks are generated")
 
     numMasks = len(masks) if len(masks) < 10 else 10
-    segments = []
-
+    
+    destination_path = './segmented_images/'
     for i in range(numMasks):
         segmentname = "segment" + str(i)
-        session[segmentname] = load_array_to_base64(better_cropped_mask(masks, i, image_array)) 
+        s = better_cropped_mask(masks, i, image_array)
+        cv2.imwrite(destination_path + segmentname + ".png", s)
+
+        # session[segmentname] = load_array_to_base64(better_cropped_mask(masks, i, image_array)) 
         # segments.append(better_cropped_mask(masks, i, image_array))
 
     # segments : the top ten objects in the image-> should be displayed in the next page 
