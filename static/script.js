@@ -64,14 +64,14 @@ const nextButtonStep1 = document.querySelector('#next_button_step1');
 if (nextButtonStep1) {
  nextButtonStep1.addEventListener('click', function() {
    // Store the image data in sessionStorage
-   const uploadedImage = imgElement.src;
-   sessionStorage.setItem('uploaded_image', uploadedImage);
+  //  const uploadedImage = imgElement.src;
+  //  sessionStorage.setItem('uploaded_image', uploadedImage);
 
 
-   // Create a FormData object to send the image data as a file
-   const formData = new FormData();
-   const file = dataURLtoFile(uploadedImage, 'uploaded_image.png');
-   formData.append('imageData', file);
+  //  // Create a FormData object to send the image data as a file
+  //  const formData = new FormData();
+  //  const file = dataURLtoFile(uploadedImage, 'uploaded_image.png');
+  //  formData.append('imageData', file);
 
 
    // Make an HTTP request to the Flask server
@@ -84,7 +84,7 @@ if (nextButtonStep1) {
        window.location.href = '/next-page';
      }
    };
-   xhr.send(formData);
+   xhr.send();
  });
 }
 const CompleteSegButton = document.querySelector('#next_button_step2');
