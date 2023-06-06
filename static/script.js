@@ -185,16 +185,63 @@ const imageGrid = document.getElementById('image-grid');
         const menu = document.createElement('div');
         menu.classList.add('menu');
         menu.style.display = 'none'; // Hide the menu initially
-  
-        // Create menu items
-        const menuItem1 = document.createElement('div');
-        menuItem1.textContent = 'Item 1';
-        const menuItem2 = document.createElement('div');
-        menuItem2.textContent = 'Item 2';
-  
-        // Append menu items to the menu
-        menu.appendChild(menuItem1);
-        menu.appendChild(menuItem2);
+
+          // Create the brightness slider
+        const brightnessSlider = document.createElement('input');
+        brightnessSlider.type = 'range';
+        brightnessSlider.min = '0';
+        brightnessSlider.max = '100';
+        brightnessSlider.value = '50'; // Initial value
+        brightnessSlider.classList.add('slider');
+        brightnessSlider.addEventListener('input', function() {
+          // Update brightness based on slider value
+          const brightnessValue = this.value;
+          segmentedImage.style.filter = `brightness(${brightnessValue}%)`;
+        });
+
+        // Create the grayscale slider
+        const grayscaleSlider = document.createElement('input');
+        grayscaleSlider.type = 'range';
+        grayscaleSlider.min = '0';
+        grayscaleSlider.max = '100';
+        grayscaleSlider.value = '0'; // Initial value
+        grayscaleSlider.classList.add('slider');
+        grayscaleSlider.addEventListener('input', function() {
+          // Update grayscale based on slider value
+          const grayscaleValue = this.value;
+          segmentedImage.style.filter = `grayscale(${grayscaleValue}%)`;
+        });
+
+        // Create the blur slider
+        const blurSlider = document.createElement('input');
+        blurSlider.type = 'range';
+        blurSlider.min = '0';
+        blurSlider.max = '10';
+        blurSlider.value = '0'; // Initial value
+        blurSlider.classList.add('slider');
+        blurSlider.addEventListener('input', function() {
+          // Update blur based on slider value
+          const blurValue = this.value;
+          segmentedImage.style.filter = `blur(${blurValue}px)`;
+        });
+        // Create the brightness label
+        const brightnessLabel = document.createElement('label');
+        brightnessLabel.textContent = 'Brightness';
+
+          // Create the blur label
+        const blurLabel = document.createElement('label');
+        blurLabel.textContent = 'Blur';
+
+        // Create the grayscale label
+        const grayscaleLabel = document.createElement('label');
+        grayscaleLabel.textContent = 'Grayscale';
+        // Append the labels and sliders to the menu
+        menu.appendChild(brightnessLabel);
+        menu.appendChild(brightnessSlider);
+        menu.appendChild(grayscaleLabel);
+        menu.appendChild(grayscaleSlider);
+        menu.appendChild(blurLabel);
+        menu.appendChild(blurSlider);
   
         // Append the segmented image, button, and menu to the image item div
         imageItem.appendChild(segmentedImage);
