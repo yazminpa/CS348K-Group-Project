@@ -13,12 +13,12 @@ def better_cropped_mask(anns, i, image):
         for y in range(image.shape[1]):
             if m[x][y] == False:
                 image[x][y][:] = 0
-    # return image 
-    plt.figure(figsize=(20,20))
-    plt.imshow(image)
-    plt.axis('off')
-    figureName = f'./segment/test' + f'{i}.png'
-    plt.savefig(figureName)
+    return image 
+    # plt.figure(figsize=(20,20))
+    # plt.imshow(image)
+    # plt.axis('off')
+    # figureName = f'./segment/test' + f'{i}.png'
+    # plt.savefig(figureName)
 
 # Display all masks in the image
 def show_anns(anns):

@@ -1,7 +1,6 @@
 import numpy as np
 from flask import Flask, request, render_template, session, send_from_directory, Response, url_for
 import pickle
-# import torch
 import base64
 from PIL import Image, ImageEnhance, ImageOps
 import io
@@ -123,7 +122,7 @@ def predict():
     
     # Process the uploaded image with the model
 
-    input_path = '/Users/xfwu/Documents/GitHub/CS348K-Group-Project/uploads/small.png'
+    input_path = '/home/alisaazxh/CS348K-Group-Project/uploads/R.jpg'
     img = cv2.imread(input_path)
     image_file = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     
@@ -138,8 +137,9 @@ def predict():
     model = {}
     # build the sam model
     model_type="vit_h"
-    sam_ckpt="./pretrained_models/sam_vit_h_4b8939.pth"
+    sam_ckpt="./pretrained_models/sam_vit_h_4b89391.pth"
     model_sam = sam_model_registry[model_type](checkpoint=sam_ckpt)
+    print("sam_ckpt is loaded")
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model_sam.to(device=device)
     model['sam'] = SamPredictor(model_sam)
@@ -160,8 +160,9 @@ def predict():
         # segments.append(better_cropped_mask(masks, i, image_array))
 
     # segments : the top ten objects in the image-> should be displayed in the next page 
+    return "segments are generated"
 
-    return render_template('index.html', prediction_text='Final image prediction: ...')
+    #return render_template('index.html', prediction_text='Final image prediction: ...')
 
 if __name__ == '__main__':
     app.run(debug=True)  # Enable debug mode
