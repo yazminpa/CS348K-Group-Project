@@ -23,6 +23,8 @@ app.secret_key = 'your_secret_key'  # Set a secret key for session encryption
 app.config['UPLOADED_PHOTO'] = 'uploads'
 app.config['UPLOADED_PHOTOS_DEST'] = './uploads'
 
+SEGMENTS_PATH = './segmented_images/'
+
 
 photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
@@ -121,20 +123,13 @@ def adjust_contrast_server():
 
 @app.route('/predict', methods=['GET'])
 def predict():
-    # uploaded_image_base64 = session.get('uploaded_image')  # Retrieve the base64-encoded image data from the session
-    # if uploaded_image_base64 is None:
-    #     return "No image data found."
-    
-    # Process the uploaded image with the model
+    # get uploaded image 
     file_url = session.get('file_url')
-    print("file_url is ", file_url)
-    print(type(file_url))
-
     file_url_complete = '.'  + file_url
     img = cv2.imread(file_url_complete)
     image_file = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    
-    if image_file is None:
+
+    if img is None:
         return "No image data found."
     print("finally image_file is not None")
 
@@ -162,6 +157,7 @@ def predict():
     
 
     for i in range(numMasks):
+        # TODO: segments not correct  
         segmentname = "segment" + str(i)
         s = better_cropped_mask(masks, i, image_file)
         # Don't know why is I use cv2 to save photos, the photos looks blueish.
