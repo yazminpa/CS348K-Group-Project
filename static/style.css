@@ -88,3 +88,8 @@ body{
     background-color: violet;
     color: white;
 }
+
+#status{
+    color: white;
+    font-size: 20px;
+}

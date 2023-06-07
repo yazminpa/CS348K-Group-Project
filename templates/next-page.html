@@ -9,22 +9,32 @@
 
 <body style="background: #827878;">
   <h1 style="color:Violet;">Step 2: Choose Segmented Layers to Perform Object Completion</h1>
-  <p style="color:white;">This is the next page where you can process the uploaded image.</p>
+  <p style="color:white;">This is the page where you can process the uploaded image.</p>
   
   <h3 style="color:Violet;">Original Image:</h3>
   <img src="{{ file_url }}" alt="Uploaded Image">
 
-  <img id="uploaded_image" alt="Uploaded Image" src="" onload="loadUploadedImage()">
+  <!-- <img id="uploaded_image" alt="Uploaded Image" src="" onload="loadUploadedImage()"> -->
 
-  <div class="test_button_container">
-    <button id="test_button" type="button" class="btn btn-primary btn-block btn-large">Test</button>
-  </div>
+  <!-- <div class="test_button_container">
+    <button id="test_button" type="button" class="btn btn-primary btn-block btn-large">Segment</button>
+  </div> -->
   
   <h3 style="color:Violet;">Segmented Layers from Image:</h3>
   <div class="image-grid" id="image-grid">
     <div class="image-item">
-      <!-- <img id="segmented_image1" class="segmented-image" alt="Segmented Image 1" src="" onload="loadUploadedImage()"> -->
-      <img id="segment0" class="segmented-image" alt="Segmented Image 1" src="" onload="loadUploadedImage()">
+      <!-- <img id="segment0" class="segmented-image" alt="Segmented Image 1" src="" onload="loadUploadedImage()"> -->
+      <img src="/backend-image-endpoint/segment0" alt="Segmented Image 0">
+      <button class="image-button" onclick="toggleButton(this)">Pick</button>
+    </div>
+    <div class="image-item">
+      <!-- <img id="segment0" class="segmented-image" alt="Segmented Image 1" src="" onload="loadUploadedImage()"> -->
+      <img src="/backend-image-endpoint/segment1" alt="Segmented Image 1">
+      <button class="image-button" onclick="toggleButton(this)">Pick</button>
+    </div>
+    <div class="image-item">
+      <!-- <img id="segment0" class="segmented-image" alt="Segmented Image 1" src="" onload="loadUploadedImage()"> -->
+      <img src="/backend-image-endpoint/segment2" alt="Segmented Image 2">
       <button class="image-button" onclick="toggleButton(this)">Pick</button>
     </div>
     <!-- Add more segmented layers as needed. Beware that loadUploadedImage() function is modified to accept 

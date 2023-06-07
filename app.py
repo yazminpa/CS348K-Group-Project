@@ -1,5 +1,5 @@
 import numpy as np
-from flask import Flask, request, render_template, session, send_from_directory, Response, url_for
+from flask import Flask, request, render_template, session, send_from_directory, Response, url_for, send_file
 import pickle
 import base64
 from PIL import Image, ImageEnhance, ImageOps
@@ -36,6 +36,11 @@ class UploadForm(FlaskForm):
 @app.route('/uploads/<filename>')
 def get_file(filename):
     return send_from_directory(app.config['UPLOADED_PHOTO'], filename)
+
+@app.route('/backend-image-endpoint/<image_name>')
+def serve_image(image_name):
+    image_path = f'/home/alisaazxh/CS348K-Group-Project/segmented_images/{image_name}.png'
+    return send_file(image_path, mimetype='image/png')
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_image():
@@ -133,7 +138,7 @@ def predict():
         return "No image data found."
     print("finally image_file is not None")
 
-    image_array = np.array(image_file)
+    #image_array = np.array(image_file)
 
     # segement the image and get the top ten objects 
     # Load models
@@ -148,18 +153,22 @@ def predict():
     model['sam'] = SamPredictor(model_sam)
     print("model_sam is loaded")
     mask_generator = SamAutomaticMaskGenerator(model_sam)
-    masks = mask_generator.generate(image_array)
+    masks = mask_generator.generate(image_file)
     print("masks are generated")
 
     numMasks = len(masks) if len(masks) < 10 else 10
     
     destination_path = './segmented_images/'
+    
+
     for i in range(numMasks):
         segmentname = "segment" + str(i)
-        s = better_cropped_mask(masks, i, image_array)
-        cv2.imwrite(destination_path + segmentname + ".png", s)
+        s = better_cropped_mask(masks, i, image_file)
+        # Don't know why is I use cv2 to save photos, the photos looks blueish.
+        #cv2.imwrite(destination_path + segmentname + ".png", s)
+        Image.fromarray(s).save(destination_path + segmentname + ".png")    
 
-        # session[segmentname] = load_array_to_base64(better_cropped_mask(masks, i, image_array)) 
+        #session[segmentname] = s
         # segments.append(better_cropped_mask(masks, i, image_array))
 
     # segments : the top ten objects in the image-> should be displayed in the next page 

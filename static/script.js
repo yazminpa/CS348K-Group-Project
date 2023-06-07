@@ -38,12 +38,10 @@ function dataURLtoFile(dataURL, filename) {
  return new File([u8arr], filename, { type: mime });
 }
 
-
-
-
-const testButton = document.querySelector('#test_button');
-if (testButton) {
- testButton.addEventListener('click', function() {
+//Dont need this function anymore
+const SegmentationButton = document.querySelector('#test_button');
+if (SegmentationButton) {
+  SegmentationButton.addEventListener('click', function() {
    // Make an HTTP request to the Flask server
    var xhr = new XMLHttpRequest();
    xhr.open('GET', '/predict', true);
@@ -59,11 +57,12 @@ if (testButton) {
 
 
 const nextButtonStep1 = document.querySelector('#next_button_step1');
+const statusElement = document.querySelector('#status');
 
 
 if (nextButtonStep1) {
- nextButtonStep1.addEventListener('click', function() {
-   // Store the image data in sessionStorage
+  nextButtonStep1.addEventListener('click', function() {
+  // Store the image data in sessionStorage
   //  const uploadedImage = imgElement.src;
   //  sessionStorage.setItem('uploaded_image', uploadedImage);
 
@@ -73,20 +72,38 @@ if (nextButtonStep1) {
   //  const file = dataURLtoFile(uploadedImage, 'uploaded_image.png');
   //  formData.append('imageData', file);
 
+  statusElement.innerText = "Segmenting...";
 
-   // Make an HTTP request to the Flask server
-   var xhr = new XMLHttpRequest();
-   xhr.open('POST', '/adjust-contrast-server', true);
-   xhr.setRequestHeader('Content-Type', 'multipart/form-data'); // Set the content type
-   xhr.onreadystatechange = function() {
-     if (xhr.readyState === 4 && xhr.status === 200) {
-       // Redirect to the next page
-       window.location.href = '/next-page';
-     }
-   };
-   xhr.send();
+  // Make an HTTP request to the Flask server
+  var xhr1 = new XMLHttpRequest();
+  xhr1.open('GET', '/predict', true);
+  xhr1.onreadystatechange = function() {
+    if (xhr1.readyState === 4 && xhr1.status === 200) {
+      console.log("first function ready")
+
+      secondFunctionCallback();
+    }  
+  };
+  xhr1.send();
  });
 }
+  // Callback function to execute the second function
+  function secondFunctionCallback() {
+    var xhr2 = new XMLHttpRequest();
+    console.log("second function")
+    xhr2.open('POST', '/adjust-contrast-server', true);
+    xhr2.setRequestHeader('Content-Type', 'multipart/form-data'); // Set the content type
+    xhr2.onreadystatechange = function() {
+      if (xhr2.readyState === 4 && xhr2.status === 200) {
+        console.log("second function ready")
+        // The second function (POST request) completed
+        // Redirect to the next page
+        window.location.href = '/next-page';
+      }
+    };
+    xhr2.send();
+  }
+
 const CompleteSegButton = document.querySelector('#next_button_step2');
 
 
@@ -120,7 +137,8 @@ function dataURItoBlob(dataURI) {
 const currentPage = window.location.pathname; // Get the current page URL path
 
 
-if (currentPage.includes('next-page') || currentPage.includes('third-page')) {
+// if (currentPage.includes('next-page') || currentPage.includes('third-page')) {
+if (currentPage.includes('third-page')) {
  loadUploadedImage();
 } else {
  console.log("Not in current path");
@@ -277,7 +295,7 @@ const imageGrid = document.getElementById('image-grid');
 }
 
 function toggleButton(button, imageItem) {
-  const menu = imageItem.querySelector('.menu');
+  // const menu = imageItem.querySelector('.menu');
   if (button.innerHTML === 'Pick') {
     button.innerHTML = 'Layer Picked';
     button.style.backgroundColor = 'gray';
