@@ -121,9 +121,12 @@ def predict():
     #     return "No image data found."
     
     # Process the uploaded image with the model
+    file_url = session.get('file_url')
+    print("file_url is ", file_url)
+    print(type(file_url))
 
-    input_path = '/home/alisaazxh/CS348K-Group-Project/uploads/R.jpg'
-    img = cv2.imread(input_path)
+    file_url_complete = '.'  + file_url
+    img = cv2.imread(file_url_complete)
     image_file = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     
     if image_file is None:
