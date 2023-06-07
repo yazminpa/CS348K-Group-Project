@@ -145,7 +145,7 @@ def predict():
     model = {}
     # build the sam model
     model_type="vit_h"
-    sam_ckpt="./pretrained_models/sam_vit_h_4b89391.pth"
+    sam_ckpt="./pretrained_models/sam_vit_h_4b8939.pth"
     model_sam = sam_model_registry[model_type](checkpoint=sam_ckpt)
     print("sam_ckpt is loaded")
     device = "cuda" if torch.cuda.is_available() else "cpu"
