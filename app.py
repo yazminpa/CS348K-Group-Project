@@ -23,6 +23,8 @@ app.secret_key = 'your_secret_key'  # Set a secret key for session encryption
 app.config['UPLOADED_PHOTO'] = 'uploads'
 app.config['UPLOADED_PHOTOS_DEST'] = './uploads'
 
+SEGMENTS_PATH = './segmented_images/'
+
 
 photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
@@ -116,31 +118,24 @@ def adjust_contrast_server():
 
 @app.route('/predict', methods=['GET'])
 def predict():
-    # uploaded_image_base64 = session.get('uploaded_image')  # Retrieve the base64-encoded image data from the session
-    # if uploaded_image_base64 is None:
-    #     return "No image data found."
-    
-    # Process the uploaded image with the model
+    # get uploaded image 
     file_url = session.get('file_url')
-    print("file_url is ", file_url)
-    print(type(file_url))
-
     file_url_complete = '.'  + file_url
     img = cv2.imread(file_url_complete)
-    image_file = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    
-    if image_file is None:
+    # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+    if img is None:
         return "No image data found."
     print("finally image_file is not None")
 
-    image_array = np.array(image_file)
+    # image_array = np.array(image_file)
 
     # segement the image and get the top ten objects 
     # Load models
     model = {}
     # build the sam model
     model_type="vit_h"
-    sam_ckpt="./pretrained_models/sam_vit_h_4b89391.pth"
+    sam_ckpt="./pretrained_models/sam_vit_h_4b8939.pth"
     model_sam = sam_model_registry[model_type](checkpoint=sam_ckpt)
     print("sam_ckpt is loaded")
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -148,16 +143,17 @@ def predict():
     model['sam'] = SamPredictor(model_sam)
     print("model_sam is loaded")
     mask_generator = SamAutomaticMaskGenerator(model_sam)
-    masks = mask_generator.generate(image_array)
+    masks = mask_generator.generate(img)
     print("masks are generated")
 
     numMasks = len(masks) if len(masks) < 10 else 10
     
-    destination_path = './segmented_images/'
+    
     for i in range(numMasks):
+        # TODO: segments not correct  
         segmentname = "segment" + str(i)
-        s = better_cropped_mask(masks, i, image_array)
-        cv2.imwrite(destination_path + segmentname + ".png", s)
+        s = better_cropped_mask(masks, i, img)
+        cv2.imwrite(SEGMENTS_PATH + segmentname + ".png", s)
 
         # session[segmentname] = load_array_to_base64(better_cropped_mask(masks, i, image_array)) 
         # segments.append(better_cropped_mask(masks, i, image_array))

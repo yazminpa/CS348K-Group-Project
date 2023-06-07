@@ -4,6 +4,7 @@ results/
 pretrained_models/
 lama/
 uploads/
+segmented_images/
 # C/C++ object files/libraries
 *.o
 *.so
