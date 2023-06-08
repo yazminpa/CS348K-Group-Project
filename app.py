@@ -41,7 +41,7 @@ def get_file(filename):
 
 @app.route('/backend-image-endpoint/<image_name>')
 def serve_image(image_name):
-    image_path = f'/home/alisaazxh/CS348K-Group-Project/segmented_images/{image_name}.png'
+    image_path = f'./segmented_images/{image_name}.png'
     return send_file(image_path, mimetype='image/png')
 
 @app.route('/', methods=['GET', 'POST'])

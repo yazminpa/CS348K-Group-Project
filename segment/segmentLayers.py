@@ -48,10 +48,10 @@ def show_selected_mask(anns, i):
     img[m] = color_mask
     print(sorted_anns[i]['bbox'])
     print(sorted_anns[i]['crop_box'])
-    plt.figure(figsize=(20,20))
-    plt.imshow(img)
-    plt.axis('off')
-    plt.savefig('/home/alisaazxh/segment/testMask.jpg')
+    # plt.figure(figsize=(20,20))
+    # plt.imshow(img)
+    # plt.axis('off')
+    # plt.savefig('/home/alisaazxh/segment/testMask.jpg')
 
 # Display the selected mask in image cropped from original
 def show_cropped_mask(anns, i):
