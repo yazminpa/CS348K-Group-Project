@@ -16,7 +16,6 @@ from wtforms import SubmitField
 from segment.segmentAnything import better_cropped_mask
 from segment_anything import sam_model_registry, SamAutomaticMaskGenerator, SamPredictor
 # from lama_inpaint import inpaint_img_with_lama, build_lama_model, inpaint_img_with_builded_lama
-from utils.utils import load_img_to_array, load_base64_to_array, load_array_to_base64
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 app.secret_key = 'your_secret_key'  # Set a secret key for session encryption
@@ -28,6 +27,20 @@ SEGMENTS_PATH = './segmented_images/'
 
 photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
+
+
+# Load models when initializing the app
+model = {}
+# build the sam model
+model_type="vit_h"
+sam_ckpt="./pretrained_models/sam_vit_h_4b8939.pth"
+model_sam = sam_model_registry[model_type](checkpoint=sam_ckpt)
+print("sam_ckpt is loaded")
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model_sam.to(device=device)
+model['sam'] = SamPredictor(model_sam)
+print("model_sam is loaded")
+mask_generator = SamAutomaticMaskGenerator(model_sam)
 
 class UploadForm(FlaskForm):
     photo = FileField( 
@@ -56,8 +69,6 @@ def upload_image():
         session['file_url'] = None
     return render_template('index.html', form=form, file_url=session.get('file_url'))
 
-
-# model = pickle.load(open('models/model.pkl', 'rb'))
 
 @app.route('/')
 def home():
@@ -126,51 +137,39 @@ def predict():
     # get uploaded image 
     file_url = session.get('file_url')
     file_url_complete = '.'  + file_url
-    img = cv2.imread(file_url_complete)
-    image_file = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
-    if img is None:
+    image_file = cv2.imread(file_url_complete)
+    # image_file = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    if image_file is None:
         return "No image data found."
     print("finally image_file is not None")
 
-    #image_array = np.array(image_file)
+    # resize the image
+    # scale_percent = 30 # percent of original size
+    # width = int(image_file.shape[1] * scale_percent / 100)
+    # height = int(image_file.shape[0] * scale_percent / 100)
+    # dim = (width, height)
+  
+    # # resize image
+    # image_file = cv2.resize(image_file, dim, interpolation = cv2.INTER_AREA)
+    # print(image_file.shape)
 
-    # segement the image and get the top ten objects 
-    # Load models
-    model = {}
-    # build the sam model
-    model_type="vit_h"
-    sam_ckpt="./pretrained_models/sam_vit_h_4b8939.pth"
-    model_sam = sam_model_registry[model_type](checkpoint=sam_ckpt)
-    print("sam_ckpt is loaded")
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    model_sam.to(device=device)
-    model['sam'] = SamPredictor(model_sam)
-    print("model_sam is loaded")
-    mask_generator = SamAutomaticMaskGenerator(model_sam)
     masks = mask_generator.generate(image_file)
     print("masks are generated")
 
     numMasks = len(masks) if len(masks) < 10 else 10
-    
+    masks = masks[:numMasks]
     destination_path = './segmented_images/'
-    
 
     for i in range(numMasks):
-        # TODO: segments not correct  
+        image_file = cv2.imread(file_url_complete)
+        # image_file = cv2.resize(image_file, dim, interpolation = cv2.INTER_AREA)
         segmentname = "segment" + str(i)
         s = better_cropped_mask(masks, i, image_file)
-        # Don't know why is I use cv2 to save photos, the photos looks blueish.
-        #cv2.imwrite(destination_path + segmentname + ".png", s)
-        Image.fromarray(s).save(destination_path + segmentname + ".png")    
+        cv2.imwrite(destination_path + segmentname + ".png", s)
+    
 
-        #session[segmentname] = s
-        # segments.append(better_cropped_mask(masks, i, image_array))
-
-    # segments : the top ten objects in the image-> should be displayed in the next page 
     return "segments are generated"
 
-    #return render_template('index.html', prediction_text='Final image prediction: ...')
 
 if __name__ == '__main__':
     app.run(debug=True)  # Enable debug mode
