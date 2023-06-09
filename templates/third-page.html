@@ -29,6 +29,12 @@
     <input id="contrast_slider_js" type="range" min="-100" max="100" value="0">
   </div>
 
+  <form id="diffusion-model-form">
+    <input type="text" id="diffusion-model-prompt" name="prompt" required>
+    <button type="submit">Generate image</button>
+  </form>
+  <div id="diffusion-model-result"></div>
+  
   <!-- <div>
     <label for="contrast_slider">Contrast (using diy algorithm, not working well): </label>
     <input id="contrast_slider" type="range" min="-100" max="100" value="0">

@@ -12,10 +12,16 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import SubmitField
 
+from werkzeug.utils import secure_filename
 
 from segment.segmentAnything import better_cropped_mask, cropped_objects
 from segment_anything import sam_model_registry, SamAutomaticMaskGenerator, SamPredictor
 # from lama_inpaint import inpaint_img_with_lama, build_lama_model, inpaint_img_with_builded_lama
+import os
+import replicate
+
+os.environ['REPLICATE_API_TOKEN'] = 'r8_W7GHOzDckeNyNAbaCUf8ts80TY71ve31LRUT6'
+
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 app.secret_key = 'your_secret_key'  # Set a secret key for session encryption
@@ -175,6 +181,15 @@ def predict():
     
 
     return "segments are generated"
+
+@app.route('/run-diffusion-model', methods=['POST'])
+def run_diffusion_model():
+    prompt = request.form.get('prompt')
+    output = replicate.run(
+        "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
+        input={"prompt": prompt}
+    )
+    return output
 
 
 if __name__ == '__main__':
