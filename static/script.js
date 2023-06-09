@@ -308,3 +308,23 @@ function toggleButton(button, imageItem) {
 }
 
 
+document.getElementById('diffusion-model-form').addEventListener('submit', function(event) {
+  event.preventDefault();
+  var prompt = document.getElementById('diffusion-model-prompt').value;
+  fetch('/run-diffusion-model', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: 'prompt=' + encodeURIComponent(prompt),
+  })
+  .then(response => response.text())
+  .then(url => {
+    // display the result image
+    var img = document.createElement('img');
+    img.src = url;
+    document.getElementById('diffusion-model-result').appendChild(img);
+  });
+});
+
+
