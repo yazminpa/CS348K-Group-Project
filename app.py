@@ -13,7 +13,7 @@ from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import SubmitField
 
 
-from segment.segmentAnything import better_cropped_mask
+from segment.segmentAnything import better_cropped_mask, cropped_objects
 from segment_anything import sam_model_registry, SamAutomaticMaskGenerator, SamPredictor
 # from lama_inpaint import inpaint_img_with_lama, build_lama_model, inpaint_img_with_builded_lama
 
@@ -156,16 +156,22 @@ def predict():
     masks = mask_generator.generate(image_file)
     print("masks are generated")
 
-    numMasks = len(masks) if len(masks) < 10 else 10
-    masks = masks[:numMasks]
+    # numMasks = len(masks) if len(masks) < 10 else 10
+    # masks = masks[:numMasks]
     destination_path = './segmented_images/'
+    segment_map = np.zeros((image_file.shape[0], image_file.shape[1]))
+    segment_index = 0
 
-    for i in range(numMasks):
+    # for i in range(masks):
+    for i in range(len(masks)):
         image_file = cv2.imread(file_url_complete)
         # image_file = cv2.resize(image_file, dim, interpolation = cv2.INTER_AREA)
-        segmentname = "segment" + str(i)
-        s = better_cropped_mask(masks, i, image_file)
-        cv2.imwrite(destination_path + segmentname + ".png", s)
+        segmentname = "segment" + str(segment_index)
+        # s = better_cropped_mask(masks, i, image_file)
+        s = cropped_objects(masks, i, image_file, segment_map)
+        if s is not False:
+            cv2.imwrite(destination_path + segmentname + ".png", s)
+            segment_index += 1
     
 
     return "segments are generated"

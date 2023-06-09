@@ -20,6 +20,33 @@ def better_cropped_mask(anns, i, image):
     # figureName = f'./segment/test' + f'{i}.png'
     # plt.savefig(figureName)
 
+def cropped_objects(anns, i, image, segment_map):
+    sorted_anns = sorted(anns, key=(lambda x: x['area']), reverse=True)
+    m = sorted_anns[i]['segmentation']
+
+    # check if the segment is already in the segment map
+    segment_area = 0
+    covered_area = 0
+    for x in range(image.shape[0]):
+        for y in range(image.shape[1]):
+            # in the segment area 
+            if m[x][y] == True:
+                segment_area += 1
+                if segment_map[x][y] == 1:
+                    covered_area += 1
+    if covered_area/segment_area > 0.3:
+        return False
+    else:
+        for x in range(image.shape[0]):
+            for y in range(image.shape[1]):
+                if m[x][y] == False:
+                    image[x][y][:] = 0
+                else:
+                    segment_map[x][y] = 1
+        return image
+
+
+
 # Display all masks in the image
 def show_anns(anns):
     if len(anns) == 0:
