@@ -3,45 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Third Page</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <title>Predictive Photoshop</title>
 </head>
-<body>
-  <h1>Edit your Layer(s)</h1>
-  <img id="uploaded_image" alt="Uploaded Image" src="" onload="loadUploadedImage()">
 
-  <div>
-    <label for="grayscale_slider">Grayscale: </label>
-    <input id="grayscale_slider" type="range" min="0" max="100" value="0">
-  </div>
-
-  <div>
-    <label for="blur_slider">Blur: </label>
-    <input id="blur_slider" type="range" min="0" max="10" value="0">
-  </div>
-
-  <div>
-    <label for="brightness_slider">Brightness: </label>
-    <input id="brightness_slider" type="range" min="0" max="200" value="100">
-  </div>
-
-  <div>
-    <label for="contrast_slider_js">Contrast: </label>
-    <input id="contrast_slider_js" type="range" min="-100" max="100" value="0">
-  </div>
+<body style="background: #827878;">
+  <h1 style="color:Violet;">Step 3: Provide prompt to edit this image</h1>
+  <p style="color:white;">This image is generated based on layers your picked in previous page.</p>
+  
+  <h3 style="color:Violet;">Original Image:</h3>
+  <img src="{{ file_url }}" alt="Uploaded Image">
+  <br>
 
   <form id="diffusion-model-form">
-    <input type="text" id="diffusion-model-prompt" name="prompt" required>
-    <button type="submit">Generate image</button>
+    <div class="form-row">
+        <label for="diffusion-model-prompt" style="color: violet;">Prompt:</label>
+        <input type="text" id="diffusion-model-prompt" name="prompt" required>
+    </div>
   </form>
-  <div id="diffusion-model-result"></div>
+  </div>
+  <br>
   
-  <!-- <div>
-    <label for="contrast_slider">Contrast (using diy algorithm, not working well): </label>
-    <input id="contrast_slider" type="range" min="-100" max="100" value="0">
-  </div> -->
-
-  <button id="save_button" type="button">Save Image</button>
-
+  <div class="next_button_step3_container">
+    <button id="next_button_step3" type="button" class="btn btn-primary btn-block btn-large">Next</button>
+  </div>
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

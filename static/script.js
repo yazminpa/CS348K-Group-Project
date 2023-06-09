@@ -138,7 +138,7 @@ const currentPage = window.location.pathname; // Get the current page URL path
 
 
 // if (currentPage.includes('next-page') || currentPage.includes('third-page')) {
-if (currentPage.includes('third-page')) {
+if (currentPage.includes('forth-page')) {
  loadUploadedImage();
 } else {
  console.log("Not in current path");
@@ -307,6 +307,25 @@ function toggleButton(button, imageItem) {
   }
 }
 
+const thirdPageNextButton = document.querySelector('#next_button_step3');
+
+if (thirdPageNextButton) {
+  thirdPageNextButton.addEventListener('click', function() {
+   // Make an HTTP request to the Flask server
+   var xhr = new XMLHttpRequest();
+   xhr.open('GET', '/forth-page', true);
+   xhr.onreadystatechange = function() {
+     if (xhr.readyState === 4 && xhr.status === 200) {
+       // Redirect to the next page
+       window.location.href = '/forth-page';
+     }
+   };
+   xhr.send();
+ });
+} else {
+ console.log("Can not go to forth page");
+}
+
 
 document.getElementById('diffusion-model-form').addEventListener('submit', function(event) {
   event.preventDefault();
@@ -326,5 +345,4 @@ document.getElementById('diffusion-model-form').addEventListener('submit', funct
     document.getElementById('diffusion-model-result').appendChild(img);
   });
 });
-
 

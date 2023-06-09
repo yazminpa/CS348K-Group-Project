@@ -90,6 +90,11 @@ def third_page():
     file_url = session.get('file_url')  # Retrieve the file_url from the session
     return render_template('third-page.html', file_url=file_url)
 
+@app.route('/forth-page')
+def forth_page():
+    file_url = session.get('file_url')  # Retrieve the file_url from the session
+    return render_template('forth-page.html', file_url=file_url)
+
 @app.route('/adjust-contrast-server', methods=['POST'])
 def adjust_contrast_server():
     if 'imageData' in request.files:

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <title>Predictive Photoshop</title>
+</head>
+<body style="background: #827878;">
+  <h1 style="color:Violet;">Step 4: Edit your Image</h1>
+  <img id="uploaded_image" alt="Uploaded Image" src="" onload="loadUploadedImage()">
+
+  <div>
+    <label for="grayscale_slider" style="color:Violet">Grayscale: </label>
+    <input id="grayscale_slider" type="range" min="0" max="100" value="0">
+  </div>
+
+  <div>
+    <label for="blur_slider" style="color:Violet">Blur: </label>
+    <input id="blur_slider" type="range" min="0" max="10" value="0">
+  </div>
+
+  <div>
+    <label for="brightness_slider" style="color:Violet">Brightness: </label>
+    <input id="brightness_slider" type="range" min="0" max="200" value="100">
+  </div>
+
+  <div>
+    <label for="contrast_slider_js" style="color:Violet">Contrast: </label>
+    <input id="contrast_slider_js" type="range" min="-100" max="100" value="0">
+  </div>
+
+  <!-- <form id="diffusion-model-form">
+    <input type="text" id="diffusion-model-prompt" name="prompt" required>
+    <button type="submit">Generate image</button>
+  </form> -->
+  <div id="diffusion-model-result"></div>
+  
+  <!-- <div>
+    <label for="contrast_slider">Contrast (using diy algorithm, not working well): </label>
+    <input id="contrast_slider" type="range" min="-100" max="100" value="0">
+  </div> -->
+
+  <button id="save_button" type="button">Save Image</button>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
