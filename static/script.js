@@ -56,22 +56,13 @@ if (SegmentationButton) {
 }
 
 
+
 const nextButtonStep1 = document.querySelector('#next_button_step1');
 const statusElement = document.querySelector('#status');
 
 
 if (nextButtonStep1) {
   nextButtonStep1.addEventListener('click', function() {
-  // Store the image data in sessionStorage
-  //  const uploadedImage = imgElement.src;
-  //  sessionStorage.setItem('uploaded_image', uploadedImage);
-
-
-  //  // Create a FormData object to send the image data as a file
-  //  const formData = new FormData();
-  //  const file = dataURLtoFile(uploadedImage, 'uploaded_image.png');
-  //  formData.append('imageData', file);
-
   statusElement.innerText = "Segmenting...";
 
   // Make an HTTP request to the Flask server
@@ -158,117 +149,13 @@ function loadUploadedImage() {
  segmentedImageElements.forEach(function(imageElement) {
    imageElement.src = uploadedImage;
  });
- // you can use the code below for when the images are all different
- // Set the source of each segmented image element to the uploaded image
- // segmentedImageElements.forEach(function(imageElement, index) {
- //   // const segmentedImageId = 'segmented_image' + (index + 1);
- //   // const segmentedImage = sessionStorage.getItem(segmentedImageId);
- //   const segmentedImage = sessionStorage.getItem('uploaded_image');
- //   if (segmentedImage) {
- //     imageElement.src = segmentedImage;
- //   } else {
- //     console.log("No segmented image " + (index + 1) + " data found in sessionStorage");
- //   }
- // });
-// Get the user input
+
 const userInput_ = 5; // Replace with your actual user input
 
 // Get the container where the image items will be appended
 const imageGrid = document.getElementById('image-grid');
 
   // Check if the image items already exist
-  const existingImageItems = imageGrid.querySelectorAll('.image-item');
-  if (existingImageItems.length < userInput_) {
-    // Generate and append the image items
-    for (let i = 0; i < userInput_; i++) {
-      // Create the image item div
-      const imageItem = document.createElement('div');
-      imageItem.classList.add('image-item');
-
-      // Create the segmented image element
-      const segmentedImage = document.createElement('img');
-      segmentedImage.id = 'segment' + i;
-      segmentedImage.classList.add('segmented-image');
-      segmentedImage.alt = 'Segmented Image ' + (i + 1);
-      segmentedImage.src = uploadedImage;
-
-        // Create the button element
-        const button = document.createElement('button');
-        button.classList.add('image-button');
-        button.textContent = 'Pick';
-        button.addEventListener('click', function() {
-          toggleButton(this, imageItem);
-        });
-        // Create the menu element
-        const menu = document.createElement('div');
-        menu.classList.add('menu');
-        menu.style.display = 'none'; // Hide the menu initially
-
-          // Create the brightness slider
-        const brightnessSlider = document.createElement('input');
-        brightnessSlider.type = 'range';
-        brightnessSlider.min = '0';
-        brightnessSlider.max = '100';
-        brightnessSlider.value = '50'; // Initial value
-        brightnessSlider.classList.add('slider');
-        brightnessSlider.addEventListener('input', function() {
-          // Update brightness based on slider value
-          const brightnessValue = this.value;
-          segmentedImage.style.filter = `brightness(${brightnessValue}%)`;
-        });
-
-        // Create the grayscale slider
-        const grayscaleSlider = document.createElement('input');
-        grayscaleSlider.type = 'range';
-        grayscaleSlider.min = '0';
-        grayscaleSlider.max = '100';
-        grayscaleSlider.value = '0'; // Initial value
-        grayscaleSlider.classList.add('slider');
-        grayscaleSlider.addEventListener('input', function() {
-          // Update grayscale based on slider value
-          const grayscaleValue = this.value;
-          segmentedImage.style.filter = `grayscale(${grayscaleValue}%)`;
-        });
-
-        // Create the blur slider
-        const blurSlider = document.createElement('input');
-        blurSlider.type = 'range';
-        blurSlider.min = '0';
-        blurSlider.max = '10';
-        blurSlider.value = '0'; // Initial value
-        blurSlider.classList.add('slider');
-        blurSlider.addEventListener('input', function() {
-          // Update blur based on slider value
-          const blurValue = this.value;
-          segmentedImage.style.filter = `blur(${blurValue}px)`;
-        });
-        // Create the brightness label
-        const brightnessLabel = document.createElement('label');
-        brightnessLabel.textContent = 'Brightness';
-
-          // Create the blur label
-        const blurLabel = document.createElement('label');
-        blurLabel.textContent = 'Blur';
-
-        // Create the grayscale label
-        const grayscaleLabel = document.createElement('label');
-        grayscaleLabel.textContent = 'Grayscale';
-        // Append the labels and sliders to the menu
-        menu.appendChild(brightnessLabel);
-        menu.appendChild(brightnessSlider);
-        menu.appendChild(grayscaleLabel);
-        menu.appendChild(grayscaleSlider);
-        menu.appendChild(blurLabel);
-        menu.appendChild(blurSlider);
-  
-        // Append the segmented image, button, and menu to the image item div
-        imageItem.appendChild(segmentedImage);
-        imageItem.appendChild(button);
-        imageItem.appendChild(menu);
-      // Append the image item div to the image grid container
-        imageGrid.appendChild(imageItem);
-    }
-  }
 
    // Get save button and add event listener
   //  const saveButton = document.getElementById('save_button');
@@ -294,16 +181,56 @@ const imageGrid = document.getElementById('image-grid');
   //  });
 }
 
+let grayscaleValue = 0;
+let saturationValue = 100;
+let brightnessValue = 100;
+let hueRotateValue = 0;
+
 function toggleButton(button, imageItem) {
-  // const menu = imageItem.querySelector('.menu');
+  const menu = imageItem.querySelector('.menu-container');
+  const grayscaleSlider = menu.querySelector('.grayscale-slider');
+  const saturationSlider = menu.querySelector('.saturation-slider');
+  const brightnessSlider = menu.querySelector('.brightness-slider');
+  const hueRotateSlider = menu.querySelector('.hue-rotate-slider');
+  const image = imageItem.querySelector('img');
+
   if (button.innerHTML === 'Pick') {
     button.innerHTML = 'Layer Picked';
     button.style.backgroundColor = 'gray';
     menu.style.display = 'block'; // Show the menu
+
+    grayscaleSlider.value = grayscaleValue;
+    saturationSlider.value = saturationValue;
+    brightnessSlider.value = brightnessValue;
+    hueRotateSlider.value = hueRotateValue;
+
+    grayscaleSlider.addEventListener('input', function() {
+      grayscaleValue = grayscaleSlider.value;
+      applyImageAdjustments();
+    });
+
+    saturationSlider.addEventListener('input', function() {
+      saturationValue = saturationSlider.value;
+      applyImageAdjustments();
+    });
+
+    brightnessSlider.addEventListener('input', function() {
+      brightnessValue = brightnessSlider.value;
+      applyImageAdjustments();
+    });
+
+    hueRotateSlider.addEventListener('input', function() {
+      hueRotateValue = hueRotateSlider.value;
+      applyImageAdjustments();
+    });
   } else {
     button.innerHTML = 'Pick';
     button.style.backgroundColor = 'white';
     menu.style.display = 'none'; // Hide the menu
+  }
+
+  function applyImageAdjustments() {
+    image.style.filter = `grayscale(${grayscaleValue}%) saturate(${saturationValue}%) brightness(${brightnessValue}%) hue-rotate(${hueRotateValue}deg)`;
   }
 }
 
