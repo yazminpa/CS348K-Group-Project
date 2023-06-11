@@ -193,8 +193,8 @@ def predict():
         s = cropped_objects(masks, i, image_file, segment_map)
         if s is not False:
             img, tmask = s
-            cv2.imwrite( segmentname + ".png", img)
-            cv2.imwrite(segmentname + "_tmask.png", tmask)        
+            cv2.imwrite( destination_path + segmentname + ".png", img)
+            cv2.imwrite( destination_path + segmentname + "_tmask.png", tmask)        
             segment_index += 1
     
 
