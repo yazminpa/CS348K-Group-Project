@@ -27,6 +27,36 @@
   <div class="next_button_step3_container">
     <button id="next_button_step3" type="button" class="btn btn-primary btn-block btn-large">Next</button>
   </div>
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script>
+    document.getElementById('next_button_step3').addEventListener('click', function() {
+      var prompt = document.getElementById('diffusion-model-prompt').value;
+      if(prompt.trim() === "") {
+        alert("Please provide a prompt.");
+        return;
+      }
+      
+      var request = new XMLHttpRequest();
+      request.open('POST', '/run-diffusion-model', true);
+      request.setRequestHeader('Content-Type', 'application/json');
+      request.onload = function() {
+        if (this.status >= 200 && this.status < 400) {
+          // Success!
+          var resp = JSON.parse(this.response);
+          console.log(resp);
+          window.location.href = "/forth-page";
+        } else {
+          // Error :(
+          console.error(this.response);
+        }
+      };
+      
+      request.onerror = function() {
+        // Connection error
+        console.error("Failed to connect to server.");
+      };
+      
+      request.send(JSON.stringify({ prompt: prompt }));
+    });
+  </script>
 </body>
 </html>

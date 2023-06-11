@@ -10,6 +10,8 @@ const contrastSlider = document.getElementById('contrast_slider');
 const blurSlider = document.getElementById('blur_slider');
 const brightnessSlider = document.getElementById('brightness_slider');
 const contrastSliderjs = document.getElementById('contrast_slider_js');
+const thirdPage_NextButton = document.querySelector('next_button_step3');
+
 let file; // Declare the file variable here
 
 
@@ -136,50 +138,35 @@ if (currentPage.includes('forth-page')) {
 }
 
 
+// function loadUploadedImage() {
+//  const uploadedImage = sessionStorage.getItem('uploaded_image');
+//  if (uploadedImage) {
+//    uploadedImageElement.src = uploadedImage;
+//  } else {
+//    console.log("No image data found in sessionStorage");
+//  }
+
+
+//  // Load segmented images
+//  segmentedImageElements.forEach(function(imageElement) {
+//    imageElement.src = uploadedImage;
+//  });
+
+// const userInput_ = 5; // Replace with your actual user input
+
+// // Get the container where the image items will be appended
+// const imageGrid = document.getElementById('image-grid');
+// }
+
 function loadUploadedImage() {
- const uploadedImage = sessionStorage.getItem('uploaded_image');
- if (uploadedImage) {
-   uploadedImageElement.src = uploadedImage;
- } else {
-   console.log("No image data found in sessionStorage");
- }
-
-
- // Load segmented images
- segmentedImageElements.forEach(function(imageElement) {
-   imageElement.src = uploadedImage;
- });
-
-const userInput_ = 5; // Replace with your actual user input
-
-// Get the container where the image items will be appended
-const imageGrid = document.getElementById('image-grid');
-
-  // Check if the image items already exist
-
-   // Get save button and add event listener
-  //  const saveButton = document.getElementById('save_button');
-  //  saveButton.addEventListener('click', function() {
-  //    const canvas = document.createElement('canvas');
-  //    const context = canvas.getContext('2d');
-  //    const ImageElement = new Image();
-  
-  //    ImageElement.onload = function() {
-  //      canvas.width = ImageElement.width;
-  //      canvas.height = ImageElement.height;
-  //      context.filter = ImageElement.style.filter;
-  //      context.drawImage(ImageElement, 0, 0);
-      
-  //      const dataURL = canvas.toDataURL('image/png');
-  //      const link = document.createElement('a');
-  //      link.href = dataURL;
-  //      link.download = 'edited_image.png';
-  //      link.click();
-  //    };
-  
-  //    ImageElement.src = uploadedImage;
-  //  });
+  const uploadedImage = sessionStorage.getItem('uploaded_image');
+  if (uploadedImage) {
+    document.getElementById('uploaded_image').src = uploadedImage; // Set the source of the image to the uploaded image
+  } else {
+    console.log("No image data found in sessionStorage");
+  }
 }
+
 
 let grayscaleValue = 0;
 let saturationValue = 100;
@@ -254,22 +241,51 @@ if (thirdPageNextButton) {
 }
 
 
-document.getElementById('diffusion-model-form').addEventListener('submit', function(event) {
-  event.preventDefault();
-  var prompt = document.getElementById('diffusion-model-prompt').value;
+// document.getElementById('diffusion-model-form').addEventListener('submit', function(event) {
+//   event.preventDefault();
+//   var prompt = document.getElementById('diffusion-model-prompt').value;
+//   fetch('/run-diffusion-model', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/x-www-form-urlencoded',
+//     },
+//     body: 'prompt=' + encodeURIComponent(prompt),
+//   })
+//   .then(response => response.text())
+//   .then(url => {
+//     // display the result image
+//     var img = document.createElement('img');
+//     img.src = url;
+//     document.getElementById('diffusion-model-result').appendChild(img);
+//   });
+// });
+
+
+const nextButtonStep3 = document.getElementById('next_button_step3');
+const promptInput = document.getElementById('prompt-input');
+
+nextButtonStep3.addEventListener('click', function() {
+  const promptData = {
+    prompt: promptInput.value
+  };
+
   fetch('/run-diffusion-model', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/json'
     },
-    body: 'prompt=' + encodeURIComponent(prompt),
+    body: JSON.stringify(promptData)
   })
-  .then(response => response.text())
-  .then(url => {
-    // display the result image
-    var img = document.createElement('img');
-    img.src = url;
-    document.getElementById('diffusion-model-result').appendChild(img);
+  .then(response => response.json())
+  .then(data => {
+    if (data.error) {
+      console.error(data.error);
+    } else {
+      window.location.href = '/forth-page?image_url=' + encodeURIComponent(data.image_url);
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
   });
 });
 

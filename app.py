@@ -19,8 +19,9 @@ from segment_anything import sam_model_registry, SamAutomaticMaskGenerator, SamP
 # from lama_inpaint import inpaint_img_with_lama, build_lama_model, inpaint_img_with_builded_lama
 import os
 import replicate
+from flask import Flask, request, jsonify
 
-os.environ['REPLICATE_API_TOKEN'] = 'r8_W7GHOzDckeNyNAbaCUf8ts80TY71ve31LRUT6'
+os.environ['REPLICATE_API_TOKEN'] = 'r8_U7fxcLt6Vd17mFdkLX4SAnvVimxb8Cn2drpdj'#'r8_W7GHOzDckeNyNAbaCUf8ts80TY71ve31LRUT6'
 
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
@@ -90,10 +91,16 @@ def third_page():
     file_url = session.get('file_url')  # Retrieve the file_url from the session
     return render_template('third-page.html', file_url=file_url)
 
+# @app.route('/forth-page')
+# def forth_page():
+#     file_url = session.get('file_url')  # Retrieve the file_url from the session
+#     return render_template('forth-page.html', file_url=file_url)
+
 @app.route('/forth-page')
 def forth_page():
-    file_url = session.get('file_url')  # Retrieve the file_url from the session
-    return render_template('forth-page.html', file_url=file_url)
+    output_image_url = session.get('output_image_url')  # Retrieve the output image URL from the session
+    return render_template('forth-page.html', image_url=output_image_url)
+
 
 @app.route('/adjust-contrast-server', methods=['POST'])
 def adjust_contrast_server():
@@ -187,14 +194,21 @@ def predict():
 
     return "segments are generated"
 
+
 @app.route('/run-diffusion-model', methods=['POST'])
 def run_diffusion_model():
-    prompt = request.form.get('prompt')
+    prompt = request.get_json().get('prompt')
+    if not prompt:
+        return jsonify({'error': 'Missing prompt'}), 400
+
     output = replicate.run(
         "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
         input={"prompt": prompt}
     )
-    return output
+    session['output_image_url'] = output[0]
+    print(output[0])
+
+    return jsonify({'success': True})
 
 
 if __name__ == '__main__':

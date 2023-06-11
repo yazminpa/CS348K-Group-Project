@@ -8,7 +8,7 @@
 </head>
 <body style="background: #827878;">
   <h1 style="color:Violet;">Step 4: Edit your Image</h1>
-  <img id="uploaded_image" alt="Uploaded Image" src="" onload="loadUploadedImage()">
+  <!--<img id="uploaded_image" alt="Uploaded Image" src="" onload="loadUploadedImage()">-->
 
   <div>
     <label for="grayscale_slider" style="color:Violet">Grayscale: </label>
@@ -41,7 +41,11 @@
     <input id="contrast_slider" type="range" min="-100" max="100" value="0">
   </div> -->
 
+  <img id="uploaded_image" alt="Uploaded Image" src="{{ image_url }}" onload="loadUploadedImage()">
+
+
   <button id="save_button" type="button">Save Image</button>
+
 
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
