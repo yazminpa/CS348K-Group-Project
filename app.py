@@ -21,6 +21,10 @@ import os
 import replicate
 from flask import Flask, request, jsonify
 
+import openai
+import requests
+
+
 os.environ['REPLICATE_API_TOKEN'] = 'r8_U7fxcLt6Vd17mFdkLX4SAnvVimxb8Cn2drpdj'#'r8_W7GHOzDckeNyNAbaCUf8ts80TY71ve31LRUT6'
 
 
@@ -194,6 +198,32 @@ def predict():
 
     return "segments are generated"
 
+@app.route('/dalle_edit', methods=['GET'])
+def edit_dalle():
+
+    # openai setting
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    image_path = "path/to/image.png"
+    mask_path = "path/to/mask.png"
+    prompt = ""
+    response = openai.Image.create_edit(
+                                image=open(image_path, "rb"),
+                                mask=open(mask_path, "rb"),
+                                prompt=prompt,
+                                n=1,
+                                size="256x256"
+                                )
+    image_url = response['data'][0]['url']
+    # TODO: get the image in image_url and save it to backend
+
+
+    return "dalle edit is done"
+
+
+@app.route('/combine', methods=['GET'])
+def combine(selected_segments):
+
+    return "combine is done"
 
 @app.route('/run-diffusion-model', methods=['POST'])
 def run_diffusion_model():
