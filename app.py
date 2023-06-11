@@ -193,6 +193,7 @@ def predict():
         s = cropped_objects(masks, i, image_file, segment_map)
         if s is not False:
             cv2.imwrite(destination_path + segmentname + ".png", s)
+            # TODO: generate transparent mask for the segment
             segment_index += 1
     
 
@@ -222,7 +223,7 @@ def edit_dalle():
 
 @app.route('/combine', methods=['GET'])
 def combine(selected_segments):
-
+    # TODO: get the selected segments from frontend
     return "combine is done"
 
 @app.route('/run-diffusion-model', methods=['POST'])
