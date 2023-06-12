@@ -75,6 +75,12 @@
         
         <label for="hue-rotate-slider">Hue Rotate:</label>
         <input type="range" id="hue-rotate-slider" min="0" max="360" value="0" class="hue-rotate-slider">
+        
+        <form id="diffusion-form1">
+          <label for="diffusion-model-prompt" style="color: violet;">Prompt:</label>
+          <input type="text" id="segment-prompt1" name="prompt" required>
+          <button id="diffusion-button1" class="image-button" onclick="DiffusionButton1(this, this.parentElement)">Diffusion</button>
+        </form>
       </div>
       
     </div>
@@ -94,6 +100,13 @@
         
         <label for="hue-rotate-slider">Hue Rotate:</label>
         <input type="range" id="hue-rotate-slider" min="0" max="360" value="0" class="hue-rotate-slider">
+       
+        <form id="diffusion-form2">
+          <label for="diffusion-model-prompt" style="color: violet;">Prompt:</label>
+          <input type="text" id="segment-prompt2" name="prompt" required>
+          <button id="diffusion-button2" class="image-button" onclick="DiffusionButton2(this, this.parentElement)">Diffusion</button>
+        </form>
+        
       </div>
       
     </div>
