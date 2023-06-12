@@ -169,7 +169,7 @@ def save_images():
 
                         # Save the image to the server
                         image_name = f'image_{index}.png'
-                        image_path = os.path.join('/Users/yazminpadilla/CS348K-Group-Project/edited_images', image_name)
+                        image_path = os.path.join('./edited_images', image_name)
                         image.save(image_path)
                     else:
                         print("Missing parameters for image object:")
