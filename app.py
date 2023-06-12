@@ -100,6 +100,89 @@ def third_page():
 #     file_url = session.get('file_url')  # Retrieve the file_url from the session
 #     return render_template('forth-page.html', file_url=file_url)
 
+def apply_style_changes(image, grayscale=False, saturation=None, brightness=None, hue_rotate=None):
+    # Convert the image to grayscale if requested
+    if grayscale:
+        image = ImageOps.grayscale(image)
+
+    # Adjust image saturation if a value is provided
+    if saturation is not None:
+        saturation = (float(saturation) - 100.0) / 100.0  # Convert to float and scale to the range [-1, 1]
+        enhancer = ImageEnhance.Color(image)
+        image = enhancer.enhance(1.0 + saturation)
+
+    # Adjust image brightness if a value is provided
+    if brightness is not None:
+        brightness = (float(brightness) - 100.0) / 100.0  # Convert to float and scale to the range [-1, 1]
+        enhancer = ImageEnhance.Brightness(image)
+        image = enhancer.enhance(1.0 + brightness)
+
+    # Adjust image hue if a value is provided
+    if hue_rotate is not None:
+        hue_rotate = float(hue_rotate) * 360.0 / 300.0  # Convert to float and scale to the range [0, 360]
+        image = image.convert('RGB')
+        image = image.convert('HSV')
+        h, s, v = image.split()
+        np_h = np.array(h)
+        np_h = (np_h + hue_rotate) % 256
+        h = Image.fromarray(np_h.astype('uint8'), mode='L')
+        image = Image.merge('HSV', (h, s, v))
+        image = image.convert('RGB')
+        
+    return image
+@app.route('/save-images', methods=['POST'])
+def save_images():
+    vector_data = request.json.get('vector')  # Retrieve the vector data from the request
+    print("Received vector data:")
+    print("len of vector", len(vector_data))
+    # Check if vector_data is not empty
+    if vector_data:
+        # Create the directory if it doesn't exist
+        if not os.path.exists('./edited_images'):
+            os.makedirs('./edited_images')
+
+        # Check if the vector_data contains at least one image object
+        if isinstance(vector_data, list) and len(vector_data) > 0:
+            # Iterate over each image object in the vector data
+            for index, image_object in enumerate(vector_data):
+                if isinstance(image_object, dict):
+                    # Retrieve the image data and style change parameters from the image object
+                    image_data = image_object.get('data')
+                    grayscale = image_object.get('grayscale')
+                    saturation = image_object.get('saturation')
+                    brightness = image_object.get('brightness')
+                    hue_rotate = image_object.get('hueRotate')
+
+                    # Check if all required parameters are present
+                    if image_data is not None and grayscale is not None and saturation is not None and brightness is not None and hue_rotate is not None:
+                        # Remove the prefix "data:image/png;base64," from the image data
+                        image_data = image_data.replace('data:image/png;base64,', '')
+
+                        # Decode the base64 image data and convert it to bytes
+                        image_bytes = base64.b64decode(image_data)
+
+                        # Create a PIL image object from the image data
+                        image = Image.open(io.BytesIO(image_bytes))
+
+                        # Apply style changes
+                        image = apply_style_changes(image, grayscale=grayscale, saturation=saturation, brightness=brightness, hue_rotate=hue_rotate)
+
+                        # Save the image to the server
+                        image_name = f'image_{index}.png'
+                        image_path = os.path.join('/Users/yazminpadilla/CS348K-Group-Project/edited_images', image_name)
+                        image.save(image_path)
+                    else:
+                        print("Missing parameters for image object:")
+                else:
+                    print("Invalid image object:")
+        else:
+            print("Invalid vector data: vector_data should be a non-empty list")
+            return jsonify({'success': False, 'message': 'Invalid vector data'})
+
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False})
+
 @app.route('/forth-page')
 def forth_page():
     output_image_url = session.get('output_image_url')  # Retrieve the output image URL from the session
