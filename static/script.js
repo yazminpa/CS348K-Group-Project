@@ -11,6 +11,7 @@ const blurSlider = document.getElementById('blur_slider');
 const brightnessSlider = document.getElementById('brightness_slider');
 const contrastSliderjs = document.getElementById('contrast_slider_js');
 const thirdPage_NextButton = document.querySelector('next_button_step3');
+var pickedImages = [];
 
 let file; // Declare the file variable here
 
@@ -97,25 +98,91 @@ if (nextButtonStep1) {
     xhr2.send();
   }
 
-const CompleteSegButton = document.querySelector('#next_button_step2');
 
-
-if (CompleteSegButton) {
- CompleteSegButton.addEventListener('click', function() {
-   // Make an HTTP request to the Flask server
-   var xhr = new XMLHttpRequest();
-   xhr.open('GET', '/third-page', true);
-   xhr.onreadystatechange = function() {
-     if (xhr.readyState === 4 && xhr.status === 200) {
-       // Redirect to the next page
-       window.location.href = '/third-page';
-     }
-   };
-   xhr.send();
- });
-} else {
- console.log("Not complete segment button");
-}
+  const CompleteSegButton = document.querySelector('#next_button_step2');
+  if (CompleteSegButton) {
+    CompleteSegButton.addEventListener('click', function() {
+      var vectorData = [];
+  
+      // Helper function to convert image Blob to Base64 data
+      function blobToBase64(blob) {
+        return new Promise(resolve => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(blob);
+        });
+      }
+  
+      // Helper function to fetch image data from URL and convert it to Blob
+      function fetchImage(url) {
+        return new Promise((resolve, reject) => {
+          fetch(url)
+            .then(response => response.blob())
+            .then(blob => resolve(blob))
+            .catch(error => reject(error));
+        });
+      }
+  
+      // Iterate over the pickedImages array
+      console.log("Number of pickedImages:", pickedImages.length);
+      Promise.all(pickedImages.map(function(image) {
+        console.log("pickedImages", pickedImages)
+        if (typeof image === 'object' && image.imageUrl && image.imageUrl.startsWith('http')) {
+          return fetchImage(image.imageUrl)
+            .then(blob => blobToBase64(blob))
+            .then(base64Data => {
+              vectorData.push({
+                data: base64Data,
+                grayscale: image.grayscale,
+                saturation: image.saturation,
+                brightness: image.brightness,
+                hueRotate: image.hueRotate
+              });
+            })
+            .catch(error => {
+              console.log('Error fetching image:', error);
+              return Promise.reject();
+            });
+        } else {
+          console.log('Invalid image object:', image);
+          return Promise.reject();
+        }
+      }))
+        .then(() => {
+          console.log("Base64 data:", vectorData);
+          console.log("vectorData", vectorData);
+  
+          // Make an HTTP request to the Flask server
+          var xhr = new XMLHttpRequest();
+          xhr.open('POST', '/save-images', true);
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+              if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                if (response.success) {
+                  // Images saved successfully, redirect to the next page
+                  window.location.href = '/third-page';
+                } else {
+                  // Handle error case
+                  console.log('Error: Images could not be saved');
+                }
+              } else {
+                // Handle error case
+                console.log('Error: ' + xhr.status);
+              }
+            }
+          };
+          xhr.send(JSON.stringify({ vector: vectorData }));
+        })
+        .catch(error => {
+          console.log('Error: ' + error);
+        });
+    });
+  } else {
+    console.log("Not the complete segment button");
+  }
+  
 // Function to convert base64 string to Blob object
 function dataURItoBlob(dataURI) {
  const byteString = atob(dataURI.split(',')[1]);
@@ -180,6 +247,7 @@ function toggleButton(button, imageItem) {
   const brightnessSlider = menu.querySelector('.brightness-slider');
   const hueRotateSlider = menu.querySelector('.hue-rotate-slider');
   const image = imageItem.querySelector('img');
+  const imageUrl = imageItem.querySelector('img').src;
 
   if (button.innerHTML === 'Pick') {
     button.innerHTML = 'Layer Picked';
@@ -210,16 +278,38 @@ function toggleButton(button, imageItem) {
       hueRotateValue = hueRotateSlider.value;
       applyImageAdjustments();
     });
+
+    // Apply the image adjustments initially
+    applyImageAdjustments();
+
+    // Add the image URL and its current style values to the pickedImages array
+    pickedImages.push({
+      imageUrl: imageUrl,
+      grayscale: grayscaleValue,
+      saturation: saturationValue,
+      brightness: brightnessValue,
+      hueRotate: hueRotateValue
+    });
+
   } else {
     button.innerHTML = 'Pick';
     button.style.backgroundColor = 'white';
     menu.style.display = 'none'; // Hide the menu
+
+    // Remove the image object from the pickedImages array based on its URL
+    const index = pickedImages.findIndex(obj => obj.imageUrl === imageUrl);
+    if (index > -1) {
+      pickedImages.splice(index, 1);
+    }
   }
+
+  console.log("vector", pickedImages);
 
   function applyImageAdjustments() {
     image.style.filter = `grayscale(${grayscaleValue}%) saturate(${saturationValue}%) brightness(${brightnessValue}%) hue-rotate(${hueRotateValue}deg)`;
   }
 }
+
 
 const thirdPageNextButton = document.querySelector('#next_button_step3');
 
