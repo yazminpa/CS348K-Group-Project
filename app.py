@@ -35,7 +35,6 @@ app.config['UPLOADED_PHOTOS_DEST'] = './uploads'
 
 SEGMENTS_PATH = './segmented_images/'
 
-
 photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 
@@ -134,6 +133,7 @@ def apply_style_changes(image, grayscale=False, saturation=None, brightness=None
 def save_images():
     vector_data = request.json.get('vector')  # Retrieve the vector data from the request
     print("Received vector data:")
+    print(vector_data)
     print("len of vector", len(vector_data))
     # Check if vector_data is not empty
     if vector_data:
@@ -168,9 +168,11 @@ def save_images():
                         image = apply_style_changes(image, grayscale=grayscale, saturation=saturation, brightness=brightness, hue_rotate=hue_rotate)
 
                         # Save the image to the server
-                        image_name = f'image_{index}.png'
-                        image_path = os.path.join('./edited_images', image_name)
-                        image.save(image_path)
+                        # image_name = f'image_{index}.png'
+                        if index != 2 or index != 3:
+                            image_name = f'image_{index}.png'
+                            image_path = os.path.join('./edited_images', image_name)
+                            image.save(image_path)
                     else:
                         print("Missing parameters for image object:")
                 else:
@@ -276,18 +278,18 @@ def predict():
 def edit_dalle1():
     #  = "a golden retriever on the sofa"
 
-    prompt = "a purple wood floor"
+    prompt = "black rug"
     img_path = "./uploads/Dog.png"
     mask_path = "./segmented_images/segment2_tmask.png"
     
-    openai.api_key = "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"
+    openai.api_key = ""
     
     response = openai.Image.create_edit(
     image= open(img_path, "rb"),
     mask= open(mask_path, "rb"),
     prompt= prompt,
     n=1,
-    size="256x256"
+    size="512x512"
     )
     image_url = response['data'][0]['url']
     
@@ -301,6 +303,19 @@ def edit_dalle1():
 
     print("Image downloaded successfully.")
 
+    dalle_img = cv2.imread("./edited_images/segment2.png")
+    msk = cv2.imread("./segmented_images/segment2.png")
+    dalle_img = cv2.resize(dalle_img, (msk.shape[1], msk.shape[0]))
+    
+    for x in range(msk.shape[0]):
+        for y in range(msk.shape[1]):
+             if(msk[x][y] == 0).all():
+                dalle_img[x][y][:] = 0
+
+    cv2.imwrite( "./edited_images/image_2.png", dalle_img)
+
+    print("segment cropped successfully.")
+
     return "dalle edit is done"
 
 @app.route('/dalle_edit2', methods=['GET'])
@@ -310,13 +325,13 @@ def edit_dalle2():
     img_path = "./uploads/Dog.png"
     mask_path = "./segmented_images/segment3_tmask.png"
 
-    openai.api_key = "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"
+    openai.api_key = ""
     response = openai.Image.create_edit(
     image= open(img_path, "rb"),
     mask= open(mask_path, "rb"),
     prompt= prompt,
     n=1,
-    size="256x256"
+    size="512x512"
     )
     image_url = response['data'][0]['url']
     
@@ -325,16 +340,30 @@ def edit_dalle2():
     response = requests.get(image_url)
     response.raise_for_status()
 
-    with open("./edited_images/segment3.jpg", "wb") as file:
+    with open("./edited_images/segment3.png", "wb") as file:
         file.write(response.content)
 
     print("Image downloaded successfully.")
+
+    dalle_img = cv2.imread("./edited_images/segment3.png")
+    msk = cv2.imread("./segmented_images/segment3.png")
+    dalle_img = cv2.resize(dalle_img, (msk.shape[1], msk.shape[0]))
+
+    for x in range(msk.shape[0]):
+        for y in range(msk.shape[1]):
+             if(msk[x][y] == 0).all():
+                dalle_img[x][y][:] = 0
+    
+    cv2.imwrite( "./edited_images/image_3.png", dalle_img)
+
+
+    print("segment cropped successfully.")
 
     return "dalle edit is done"
 
 
 @app.route('/combine', methods=['GET'])
-def combine(selected_segments):
+def combine():
     # TODO: get the selected segments from frontend
     return "combine is done"
 
