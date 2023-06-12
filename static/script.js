@@ -1,7 +1,3 @@
-
-
-
-
 const imageInput = document.querySelector('#image_input');
 const imgElement = document.querySelector('#display_image_img');
 const uploadedImageElement = document.querySelector('#uploaded_image');
@@ -162,7 +158,16 @@ if (nextButtonStep1) {
                 var response = JSON.parse(xhr.responseText);
                 if (response.success) {
                   // Images saved successfully, redirect to the next page
-                  window.location.href = '/third-page';
+                  var xhrCombine = new XMLHttpRequest();
+                  xhrCombine.open('POST', '/combine-images', true);
+                  xhrCombine.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+                  xhrCombine.onreadystatechange = function () {
+                    if (xhrCombine.readyState === 4 && xhrCombine.status === 200) {
+                      localStorage.setItem('combinedImageUrl', xhrCombine.responseText);
+                      window.location.href = '/forth-page';
+                    }
+                  }
+                  xhrCombine.send("");
                 } else {
                   // Handle error case
                   console.log('Error: Images could not be saved');
@@ -405,3 +410,13 @@ nextButtonStep3.addEventListener('click', function() {
   });
 });
 
+
+window.addEventListener('load', (event) => {
+  const combinedImageUrl = localStorage.getItem('combinedImageUrl');
+  if (combinedImageUrl) {
+    const imgElement = document.getElementById('uploaded_image'); // replace 'combined_image' with the actual id of your <img> tag
+    if (imgElement) {
+      imgElement.src = combinedImageUrl;
+    }
+  }
+});

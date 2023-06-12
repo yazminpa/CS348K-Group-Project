@@ -298,12 +298,12 @@ def edit_dalle1():
     response = requests.get(image_url)
     response.raise_for_status()
 
-    with open("./edited_images/segment2.png", "wb") as file:
+    with open("./dalle_images/dalle_segment2.png", "wb") as file:
         file.write(response.content)
 
     print("Image downloaded successfully.")
 
-    dalle_img = cv2.imread("./edited_images/segment2.png")
+    dalle_img = cv2.imread("./dalle_images/dalle_segment2.png")
     msk = cv2.imread("./segmented_images/segment2.png")
     dalle_img = cv2.resize(dalle_img, (msk.shape[1], msk.shape[0]))
     
@@ -340,12 +340,12 @@ def edit_dalle2():
     response = requests.get(image_url)
     response.raise_for_status()
 
-    with open("./edited_images/segment3.png", "wb") as file:
+    with open("./dalle_images/dalle_segment3.png", "wb") as file:
         file.write(response.content)
 
     print("Image downloaded successfully.")
 
-    dalle_img = cv2.imread("./edited_images/segment3.png")
+    dalle_img = cv2.imread("./dalle_images/dalle_segment3.png")
     msk = cv2.imread("./segmented_images/segment3.png")
     dalle_img = cv2.resize(dalle_img, (msk.shape[1], msk.shape[0]))
 
@@ -361,12 +361,6 @@ def edit_dalle2():
 
     return "dalle edit is done"
 
-
-@app.route('/combine', methods=['GET'])
-def combine():
-    # TODO: get the selected segments from frontend
-    return "combine is done"
-
 @app.route('/run-diffusion-model', methods=['POST'])
 def run_diffusion_model():
     prompt = request.get_json().get('prompt')
@@ -381,6 +375,36 @@ def run_diffusion_model():
     print(output[0])
 
     return jsonify({'success': True})
+
+@app.route('/combine-images', methods=['POST'])
+def combine_images(): 
+    #replacing the black pixels with the corresponding pixels from the other image.
+    print("Combine images-----------------------------")
+    print("-------------------------------------------")
+    path = './edited_images'
+    images = [Image.open(os.path.join(path, i)).convert("RGBA") for i in os.listdir(path) if i.endswith(".png")]
+    
+    # Convert the first image to an np.array
+    combined = np.array(images[0])
+    
+    for img in images[1:]:
+        img_np = np.array(img)
+
+        # Create a mask of where the image is black
+        mask = np.all(img_np == [0, 0, 0, 255], axis=-1)
+        
+        # Where the mask is True, replace with pixels from the combined image
+        img_np[mask] = combined[mask]
+        
+        combined = img_np
+
+    print("shape of combined image in array format: ", combined.shape)
+    # Convert the combined np.array back to an image
+    combined_image = Image.fromarray(combined)
+
+    combined_image.save('static/combined.png')
+    return url_for('static', filename='static/combined.png')
+
 
 
 if __name__ == '__main__':
