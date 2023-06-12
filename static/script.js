@@ -149,9 +149,6 @@ if (nextButtonStep1) {
         }
       }))
         .then(() => {
-          console.log("Base64 data:", vectorData);
-          console.log("vectorData", vectorData);
-  
           // Make an HTTP request to the Flask server
           var xhr = new XMLHttpRequest();
           xhr.open('POST', '/save-images', true);
@@ -203,16 +200,6 @@ if (currentPage.includes('forth-page')) {
 } else {
  console.log("Not in current path");
 }
-
-
-// function loadUploadedImage() {
-//  const uploadedImage = sessionStorage.getItem('uploaded_image');
-//  if (uploadedImage) {
-//    uploadedImageElement.src = uploadedImage;
-//  } else {
-//    console.log("No image data found in sessionStorage");
-//  }
-
 
 //  // Load segmented images
 //  segmentedImageElements.forEach(function(imageElement) {

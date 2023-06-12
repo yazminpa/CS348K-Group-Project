@@ -219,17 +219,6 @@ def adjust_contrast_server():
     else:
         return "No image data received"
 
-
-    
-# @app.route('/get-image/<path:image_name>')
-# def get_image(image_name):
-#     if 'uploaded_image' in session and image_name == 'uploaded_image':
-#         image_data = session['uploaded_image']
-#         return Response(image_data, mimetype='image/png')
-
-#     # Return a default image if the requested image is not found
-#     return send_from_directory('static', 'default_image.png')
-
 # @app.route('/upload-image', methods=['POST'])
 # def upload_image():
 #     image_file = request.files['image']
