@@ -169,7 +169,7 @@ def save_images():
 
                         # Save the image to the server
                         image_name = f'image_{index}.png'
-                        image_path = os.path.join('/Users/yazminpadilla/CS348K-Group-Project/edited_images', image_name)
+                        image_path = os.path.join('./edited_images', image_name)
                         image.save(image_path)
                     else:
                         print("Missing parameters for image object:")
@@ -218,17 +218,6 @@ def adjust_contrast_server():
             return "Error processing image"
     else:
         return "No image data received"
-
-
-    
-# @app.route('/get-image/<path:image_name>')
-# def get_image(image_name):
-#     if 'uploaded_image' in session and image_name == 'uploaded_image':
-#         image_data = session['uploaded_image']
-#         return Response(image_data, mimetype='image/png')
-
-#     # Return a default image if the requested image is not found
-#     return send_from_directory('static', 'default_image.png')
 
 # @app.route('/upload-image', methods=['POST'])
 # def upload_image():
