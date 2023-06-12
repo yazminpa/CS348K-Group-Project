@@ -275,8 +275,9 @@ def predict():
         # s = better_cropped_mask(masks, i, image_file)
         s = cropped_objects(masks, i, image_file, segment_map)
         if s is not False:
-            cv2.imwrite(destination_path + segmentname + ".png", s)
-            # TODO: generate transparent mask for the segment
+            img, tmask = s
+            cv2.imwrite( destination_path + segmentname + ".png", img)
+            cv2.imwrite( destination_path + segmentname + "_tmask.png", tmask)        
             segment_index += 1
     
 

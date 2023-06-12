@@ -25,6 +25,7 @@ def cropped_objects(anns, i, image, segment_map):
     m = sorted_anns[i]['segmentation']
 
     # check if the segment is already in the segment map
+    segment_tmask = np.zeros((image.shape[0], image.shape[1], 4))
     segment_area = 0
     covered_area = 0
     for x in range(image.shape[0]):
@@ -40,10 +41,13 @@ def cropped_objects(anns, i, image, segment_map):
         for x in range(image.shape[0]):
             for y in range(image.shape[1]):
                 if m[x][y] == False:
+                    segment_tmask[x][y][:3] = image[x][y][:]
+                    segment_tmask[x][y][3] = 256
                     image[x][y][:] = 0
                 else:
+                    segment_tmask[x][y][3] = 0
                     segment_map[x][y] = 1
-        return image
+        return image, segment_tmask
 
 
 
