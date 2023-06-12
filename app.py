@@ -272,24 +272,63 @@ def predict():
 
     return "segments are generated"
 
-@app.route('/dalle_edit', methods=['GET'])
-def edit_dalle():
+@app.route('/dalle_edit1', methods=['GET'])
+def edit_dalle1():
+    #  = "a golden retriever on the sofa"
 
-    # openai setting
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-    image_path = "path/to/image.png"
-    mask_path = "path/to/mask.png"
-    prompt = ""
+    prompt = "a purple wood floor"
+    img_path = "./uploads/Dog.png"
+    mask_path = "./segmented_images/segment2_tmask.png"
+    
+    openai.api_key = "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"
+    
     response = openai.Image.create_edit(
-                                image=open(image_path, "rb"),
-                                mask=open(mask_path, "rb"),
-                                prompt=prompt,
-                                n=1,
-                                size="256x256"
-                                )
+    image= open(img_path, "rb"),
+    mask= open(mask_path, "rb"),
+    prompt= prompt,
+    n=1,
+    size="256x256"
+    )
     image_url = response['data'][0]['url']
-    # TODO: get the image in image_url and save it to backend
+    
+    print(image_url)
 
+    response = requests.get(image_url)
+    response.raise_for_status()
+
+    with open("./edited_images/segment2.png", "wb") as file:
+        file.write(response.content)
+
+    print("Image downloaded successfully.")
+
+    return "dalle edit is done"
+
+@app.route('/dalle_edit2', methods=['GET'])
+def edit_dalle2():
+    
+    prompt = "a golden retriever"
+    img_path = "./uploads/Dog.png"
+    mask_path = "./segmented_images/segment3_tmask.png"
+
+    openai.api_key = "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"
+    response = openai.Image.create_edit(
+    image= open(img_path, "rb"),
+    mask= open(mask_path, "rb"),
+    prompt= prompt,
+    n=1,
+    size="256x256"
+    )
+    image_url = response['data'][0]['url']
+    
+    print(image_url)
+
+    response = requests.get(image_url)
+    response.raise_for_status()
+
+    with open("./edited_images/segment3.jpg", "wb") as file:
+        file.write(response.content)
+
+    print("Image downloaded successfully.")
 
     return "dalle edit is done"
 

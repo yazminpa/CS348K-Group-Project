@@ -149,6 +149,9 @@ if (nextButtonStep1) {
         }
       }))
         .then(() => {
+          console.log("Base64 data:", vectorData);
+          console.log("vectorData", vectorData);
+  
           // Make an HTTP request to the Flask server
           var xhr = new XMLHttpRequest();
           xhr.open('POST', '/save-images', true);
@@ -226,6 +229,42 @@ let grayscaleValue = 0;
 let saturationValue = 100;
 let brightnessValue = 100;
 let hueRotateValue = 0;
+
+
+// Diffusion button 
+const DiffusionButton1 = document.querySelector('#diffusion-button1');
+if (DiffusionButton1) {
+  DiffusionButton1.addEventListener('click', function() {
+   // Make an HTTP request to the Flask server
+   var xhr = new XMLHttpRequest();
+   xhr.open('GET', '/dalle_edit1', true);
+   xhr.onload = function() {
+     if (xhr.readyState === 4 && xhr.status === 200) {
+       var response = JSON.parse(xhr.responseText);
+       console.log(response.message);
+     }
+   };
+   xhr.send();
+ });
+}
+
+// Diffusion button 
+const DiffusionButton2 = document.querySelector('#diffusion-button2');
+if (DiffusionButton2) {
+  DiffusionButton2.addEventListener('click', function() {
+   // Make an HTTP request to the Flask server
+   var xhr = new XMLHttpRequest();
+   xhr.open('GET', '/dalle_edit2', true);
+   xhr.onload = function() {
+     if (xhr.readyState === 4 && xhr.status === 200) {
+       var response = JSON.parse(xhr.responseText);
+       console.log(response.message);
+     }
+   };
+   xhr.send();
+ });
+}
+
 
 function toggleButton(button, imageItem) {
   const menu = imageItem.querySelector('.menu-container');
