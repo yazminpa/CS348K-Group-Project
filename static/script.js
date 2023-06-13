@@ -313,14 +313,22 @@ function toggleButton(button, imageItem) {
     // Apply the image adjustments initially
     applyImageAdjustments();
 
-    // Add the image URL and its current style values to the pickedImages array
-    pickedImages.push({
-      imageUrl: imageUrl,
-      grayscale: grayscaleValue,
-      saturation: saturationValue,
-      brightness: brightnessValue,
-      hueRotate: hueRotateValue
-    });
+    // Check if the image name is not segment2.png or segment3.png
+    const imageName = imageUrl.split('/').pop(); // Extract the image name from the URL
+    // Check if the imageUrl contains "segment2" or "segment3"
+    if (imageUrl.includes('segment2') || imageUrl.includes('segment3')) {
+      console.log("skip seg 2 or 3")
+      // If the image is segment2.png or segment3.png, skip adding it to the pickedImages array
+    } else {
+      // Add the image URL and its current style values to the pickedImages array
+      pickedImages.push({
+        imageUrl: imageUrl,
+        grayscale: grayscaleValue,
+        saturation: saturationValue,
+        brightness: brightnessValue,
+        hueRotate: hueRotateValue
+      });
+    }
 
   } else {
     button.innerHTML = 'Pick';

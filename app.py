@@ -134,7 +134,6 @@ def save_images():
     vector_data = request.json.get('vector')  # Retrieve the vector data from the request
     print("Received vector data:")
     print(vector_data)
-    print("len of vector", len(vector_data))
     # Check if vector_data is not empty
     if vector_data:
         # Create the directory if it doesn't exist
@@ -143,8 +142,11 @@ def save_images():
 
         # Check if the vector_data contains at least one image object
         if isinstance(vector_data, list) and len(vector_data) > 0:
+            # Counter to keep track of the image index
+            image_index = 0
+
             # Iterate over each image object in the vector data
-            for index, image_object in enumerate(vector_data):
+            for image_object in vector_data:
                 if isinstance(image_object, dict):
                     # Retrieve the image data and style change parameters from the image object
                     image_data = image_object.get('data')
@@ -167,12 +169,13 @@ def save_images():
                         # Apply style changes
                         image = apply_style_changes(image, grayscale=grayscale, saturation=saturation, brightness=brightness, hue_rotate=hue_rotate)
 
-                        # Save the image to the server
-                        # image_name = f'image_{index}.png'
-                        if index != 2 or index != 3:
-                            image_name = f'image_{index}.png'
-                            image_path = os.path.join('./edited_images', image_name)
-                            image.save(image_path)
+                        # Save the image to the server with the correct index
+                        image_name = f'image_{image_index}.png'
+                        image_path = os.path.join('./edited_images', image_name)
+                        image.save(image_path)
+
+                        # Increment the image index
+                        image_index += 1
                     else:
                         print("Missing parameters for image object:")
                 else:
@@ -184,6 +187,7 @@ def save_images():
         return jsonify({'success': True})
     else:
         return jsonify({'success': False})
+
 
 @app.route('/forth-page')
 def forth_page():
