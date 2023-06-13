@@ -55,6 +55,37 @@
       const combinedImageUrl = "{{ url_for('static', filename='combined.png') }}";
       document.getElementById('uploaded_image').src = combinedImageUrl;
     }
+
+    
+    // Get a reference to the "Save Image" button
+    const saveButton = document.getElementById("save_button");
+
+// Remove any existing event listeners from the button
+saveButton.removeEventListener("click", saveImage);
+
+// Add a click event listener to the button
+saveButton.addEventListener("click", saveImage);
+
+// Function to handle the "Save Image" button click
+function saveImage() {
+  // Get a reference to the uploaded image element
+  const uploadedImage = document.getElementById("uploaded_image");
+
+  // Create a temporary anchor element
+  const downloadLink = document.createElement("a");
+
+  // Set the href attribute to the uploaded image URL
+  downloadLink.href = uploadedImage.src;
+
+  // Set the download attribute to specify the filename
+  downloadLink.download = "image.png";
+
+  // Programmatically click the anchor element to trigger the download
+  downloadLink.click();
+
+  // Cleanup: remove the temporary anchor element
+  downloadLink.remove();
+}
   </script>
   
   <script src="{{ url_for('static', filename='script.js') }}"></script>
